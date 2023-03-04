@@ -62,13 +62,6 @@ public class LinksObject {
     }
 
     /**
-     * Removes all links of this {@link LinksObject}.
-     */
-    public void clear() {
-        links.clear();
-    }
-
-    /**
      * @return {@code true} if this {@link LinksObject} does not contain any links.
      */
     public boolean isEmpty() {

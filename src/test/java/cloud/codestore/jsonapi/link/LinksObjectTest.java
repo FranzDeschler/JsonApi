@@ -27,17 +27,7 @@ class LinksObjectTest
         assertThatThrownBy(() -> new LinksObject().add(null))
                   .isInstanceOf(NullPointerException.class);
     }
-    
-    @Test
-    @DisplayName("can be cleared")
-    void clear()
-    {
-        LinksObject linksObject = new LinksObject().add(new Link(Link.SELF, HREF));
-        assertThat(linksObject.isEmpty()).isFalse();
-        linksObject.clear();
-        assertThat(linksObject.isEmpty()).isTrue();
-    }
-    
+
     @Test
     @DisplayName("can find the \"self\" link")
     void getSelfLink()
