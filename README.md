@@ -23,7 +23,7 @@ The library can be included via Maven. It contains Jackson as its only dependenc
 <dependency>
     <groupId>cloud.codestore</groupId>
     <artifactId>jsonapi</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 </dependency>
 ```
 If your application already includes Jackson and you want to avoid dependency conflicts, simply exclude Jackson.
@@ -31,7 +31,7 @@ If your application already includes Jackson and you want to avoid dependency co
 <dependency>
     <groupId>cloud.codestore</groupId>
     <artifactId>jsonapi</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <exclusions>
         <exclusion>
             <groupId>com.fasterxml.jackson.core</groupId>
