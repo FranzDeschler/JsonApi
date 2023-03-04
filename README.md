@@ -57,8 +57,10 @@ public class Person extends ResourceObject  {
     @JsonProperty("firstName") private String firstName;
     @JsonProperty("lastName")  private String lastName;
 
-    public Person(String id) {
+    public Person(String id, String firstName, String lastName) {
         super("person", id);
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
     
     // Getter / Setter ...
@@ -70,7 +72,7 @@ public class Person extends ResourceObject  {
 To create a `JsonApiDocument` which contains a single resource object, create a new `SingleResourceDocument` instance
 or use the more convenient factory method `of()` in the `JsonApiDocument` class.
 ```java
-var person = new Person("1");
+var person = new Person("1", "John", "Doe");
 var document = JsonApiDocument.of(person);
 ```
 ```json
@@ -90,7 +92,7 @@ var document = JsonApiDocument.of(person);
 To create a `JsonApiDocument` which contains multiple resource objects, create a new `ResourceCollectionDocument` instance
 or use the more convenient factory method `of()` in the `JsonApiDocument` class.
 ```java
-var persons = new Person[]{new Person("1"), new Person("2")};
+var persons = new Person[]{new Person("1", "John", "Doe"), new Person("2", "Jane", "Doe")};
 var document = JsonApiDocument.of(persons);
 ```
 ```json
@@ -98,11 +100,17 @@ var document = JsonApiDocument.of(persons);
   "data": [{
     "type": "person",
     "id": "1",
-    "attributes": {...}
+    "attributes": {
+      "firstName": "John",
+      "lastName": "Doe"
+    }
   }, {
     "type": "person",
     "id": "2",
-    "attributes": {...}
+    "attributes": {
+      "firstName": "Jane",
+      "lastName": "Doe"
+    }
   }]
 }
 ```
@@ -122,7 +130,10 @@ var document = JsonApiDocument.of(person).addLink(new Link("home", "https://exam
   "data": {
     "type": "person",
     "id": "1",
-    "attributes": {...},
+    "attributes": {
+      "firstName": "Jane",
+      "lastName": "Doe"
+    },
     "links": {
       "self": "https://example.com/persons/1"
     }
@@ -219,15 +230,22 @@ public class Article extends ResourceObject {
   "included": [{
     "type": "person",
     "id": "1",
-    "attributes": {...}
+    "attributes": {
+      "firstName": "Jane",
+      "lastName": "Doe"
+    }
   }, {
     "type": "comment",
     "id": "1",
-    "attributes": {...}
+    "attributes": {
+      "text": "The first comment on this article."
+    }
   }, {
     "type": "comment",
     "id": "2",
-    "attributes": {...}
+    "attributes": {
+      "text": "Another useless comment nobody will read."
+    }
   }]
 }
 ```
@@ -250,7 +268,10 @@ var document = JsonApiDocument.of(person).setMeta(meta);
 ```
 ```json
 {
-  "data": {...},
+  "data": {
+    "type": "person",
+    "id": "1"
+  },
   "meta": {
     "info": "Read the JSON:API documentation at jsonapi.org"
   }
@@ -267,7 +288,10 @@ var document = JsonApiDocument.of(person).setJsonapiObject(new JsonApiObject());
   "jsonapi": {
     "version": "1.0"
   },
-  ...
+  "data": {
+    "type": "person",
+    "id": "1"
+  }
 }
 ```
 
