@@ -42,11 +42,6 @@ class MetaInformationDeserializerTest {
             }
 
             @Override
-            public Class<? extends MetaInformation> getClass(String pointer) {
-                return null;
-            }
-
-            @Override
             public MetaInformation deserialize(String pointer, ObjectNode node) {
                 if (node.has("info")) {
                     DummyMetaInformation meta = new DummyMetaInformation();
