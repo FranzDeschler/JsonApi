@@ -8,13 +8,8 @@ import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
 import cloud.codestore.jsonapi.relationship.Relationship;
 import cloud.codestore.jsonapi.relationship.ToOneRelationship;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
-
-import java.util.Objects;
 
 /**
  * Represents a JSON:API resource object.
@@ -29,7 +24,7 @@ import java.util.Objects;
 public abstract class ResourceObject {
     private String type;
     private String id;
-    private LinksObject links;
+    private LinksObject links = new LinksObject();
     private MetaInformation meta;
 
     private JsonApiDocument parent;
@@ -93,7 +88,6 @@ public abstract class ResourceObject {
      * @throws IllegalArgumentException if {@code self} is {@code null} or blank.
      */
     public ResourceObject setSelfLink(String self) {
-        links = Objects.requireNonNullElseGet(links, LinksObject::new);
         links.add(new Link(Link.SELF, self));
         return this;
     }
@@ -112,6 +106,7 @@ public abstract class ResourceObject {
      * @return a {@link LinksObject} containing the links of this resource object.
      */
     @JsonGetter("links")
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY, content = JsonInclude.Include.NON_EMPTY)
     public LinksObject getLinks() {
         return links;
     }

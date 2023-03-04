@@ -21,7 +21,8 @@ class ToOneRelationshipTest
     @Test
     @DisplayName("is empty after creation")
     void isEmpty() {
-        assertThat(relationship.getLinks()).isNull();
+        assertThat(relationship.getLinks()).isNotNull();
+        assertThat(relationship.getLinks().isEmpty()).isTrue();
         assertThat(relationship.getData()).isNull();
         assertThat(relationship.getRelatedResource()).isNull();
         assertThat(relationship.isIncluded()).isFalse();

@@ -6,6 +6,7 @@ import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -18,7 +19,7 @@ import java.util.Objects;
  */
 @JsonDeserialize(using = RelationshipDeserializer.class)
 public class Relationship {
-    private LinksObject links;
+    private LinksObject links = new LinksObject();
     private MetaInformation meta;
 
     /**
@@ -50,7 +51,6 @@ public class Relationship {
      * @return this object.
      */
     public Relationship setRelatedResourceLink(String relatedResourceLink) {
-        links = Objects.requireNonNullElseGet(links, LinksObject::new);
         links.add(new Link(Link.RELATED, relatedResourceLink));
         return this;
     }
@@ -60,10 +60,8 @@ public class Relationship {
      * The result is never {@code null} but the {@link LinksObject} may be empty.
      */
     @JsonGetter("links")
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY, content = JsonInclude.Include.NON_EMPTY)
     public LinksObject getLinks() {
-        if (links != null && links.isEmpty())
-            return null;
-
         return links;
     }
 

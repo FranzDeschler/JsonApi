@@ -152,7 +152,8 @@ class ErrorObjectTest
             assertThat(errorObject.getTitle()).isNull();
             assertThat(errorObject.getDetail()).isNull();
             assertThat(errorObject.getSource()).isNull();
-            assertThat(errorObject.getLinks()).isNull();
+            assertThat(errorObject.getLinks()).isNotNull();
+            assertThat(errorObject.getLinks().isEmpty()).isTrue();
             assertThat(errorObject.getMeta()).isNull();
         }
 

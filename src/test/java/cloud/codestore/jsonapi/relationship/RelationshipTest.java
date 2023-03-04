@@ -2,6 +2,7 @@ package cloud.codestore.jsonapi.relationship;
 
 import cloud.codestore.jsonapi.DummyMetaInformation;
 import cloud.codestore.jsonapi.TestObjectWriter;
+import cloud.codestore.jsonapi.link.LinksObject;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,9 @@ class RelationshipTest
     @DisplayName("is empty after creation")
     void empty()
     {
-        Assertions.assertThat(new Relationship().getLinks()).isNull();
+        LinksObject links = new Relationship().getLinks();
+        Assertions.assertThat(links).isNotNull();
+        Assertions.assertThat(links.isEmpty()).isTrue();
     }
     
     @Test

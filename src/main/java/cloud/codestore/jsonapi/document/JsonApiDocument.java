@@ -38,7 +38,7 @@ public abstract class JsonApiDocument {
 
     private JsonApiObject jsonapi;
     private List<ResourceObject> includedResources = new LinkedList<>();
-    private LinksObject links;
+    private LinksObject links = new LinksObject();
     private MetaInformation meta;
 
     /**
@@ -119,7 +119,6 @@ public abstract class JsonApiDocument {
      * @throws NullPointerException if {@code link} is {@code null}.
      */
     public JsonApiDocument addLink(Link link) {
-        links = Objects.requireNonNullElseGet(links, LinksObject::new);
         links.add(link);
         return this;
     }
@@ -128,6 +127,7 @@ public abstract class JsonApiDocument {
      * @return a {@link LinksObject} containing the links of this JSON:API document.
      */
     @JsonGetter("links")
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY, content = JsonInclude.Include.NON_EMPTY)
     public LinksObject getLinks() {
         return links;
     }

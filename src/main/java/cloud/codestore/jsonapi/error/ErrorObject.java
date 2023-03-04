@@ -4,10 +4,9 @@ import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
-
-import java.util.Objects;
 
 /**
  * Represents a JSON:API error object.
@@ -17,7 +16,7 @@ import java.util.Objects;
 @JsonPropertyOrder({"id", "links", "status", "code", "title", "detail", "source", "meta"})
 public class ErrorObject {
     private String id;
-    private LinksObject links;
+    private LinksObject links = new LinksObject();
     private String status;
     private String code;
     private String title;
@@ -116,6 +115,7 @@ public class ErrorObject {
      * @return a {@link LinksObject} containing the links of this error object.
      */
     @JsonGetter("links")
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY, content = JsonInclude.Include.NON_EMPTY)
     public LinksObject getLinks() {
         return links;
     }
@@ -125,7 +125,6 @@ public class ErrorObject {
      * @return this object.
      */
     public ErrorObject setAboutLink(String link) {
-        links = Objects.requireNonNullElseGet(links, LinksObject::new);
         links.add(new Link(Link.ABOUT, link));
         return this;
     }
