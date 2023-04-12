@@ -385,13 +385,13 @@ if (document instanceof SingleResourceDocument document) {
 
 ### Single Resource Object
 ```java
-SingleResourceDocument<Person> document = objectMapper.readValue("{...}", SingleResourceDocument.class);
+SingleResourceDocument<Person> document = objectMapper.readValue("{...}", new TypeReference<SingleResourceDocument<Person>>() {});
 Person person = document.getData();
 ```
 
 ### Resource Object Collection
 ```java
-ResourceCollectionDocument<Comment> document = objectMapper.readValue("{...}", ResourceCollectionDocument.class);
+ResourceCollectionDocument<Comment> document = objectMapper.readValue("{...}", new TypeReference<ResourceCollectionDocument<Comment>>() {});
 Comment[] comments = document.getData();
 ```
 
@@ -418,7 +418,7 @@ public class Article extends ResourceObject {
 }
 ```
 ```java
-SingleResourceDocument<Article> document = objectMapper.readValue("{...}", SingleResourceDocument.class);
+SingleResourceDocument<Article> document = objectMapper.readValue("{...}", new TypeReference<SingleResourceDocument<Article>>() {});
 var authorRelationship = document.getData().getAuthor();
 var author = authorRelationship.getRelatedResource(Person.class);
 ```

@@ -3,9 +3,12 @@ package cloud.codestore.jsonapi;
 import cloud.codestore.jsonapi.meta.MetaDeserializer;
 import cloud.codestore.jsonapi.meta.MetaInformation;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.assertj.core.api.Assertions;
+
+import java.lang.reflect.Type;
 
 public class TestObjectReader {
     private static final DynamicMetaDeserializer metaDeserializer = new DynamicMetaDeserializer();
@@ -19,10 +22,18 @@ public class TestObjectReader {
     }
 
     public static <T> T read(String json, Class<T> type) {
-        return read(json, type, null);
+        return read(json, toTypeReference(type), null);
+    }
+
+    public static <T> T read(String json, TypeReference<T> typeReference) {
+        return read(json, typeReference, null);
     }
 
     public static <T> T read(String json, Class<T> type, MetaDeserializer metaDeserializer) {
+        return read(json, toTypeReference(type), metaDeserializer);
+    }
+
+    public static <T> T read(String json, TypeReference<T> type, MetaDeserializer metaDeserializer) {
         try {
             TestObjectReader.metaDeserializer.delegate = metaDeserializer;
             return INSTANCE.readValue(json, type);
@@ -46,4 +57,12 @@ public class TestObjectReader {
         }
     }
 
+    private static <T> TypeReference<T> toTypeReference(Class<T> type) {
+        return new TypeReference<>() {
+            @Override
+            public Type getType() {
+                return type;
+            }
+        };
+    }
 }

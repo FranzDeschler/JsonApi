@@ -7,6 +7,7 @@ import cloud.codestore.jsonapi.TestObjectWriter;
 import cloud.codestore.jsonapi.document.SingleResourceDocument;
 import cloud.codestore.jsonapi.resource.ResourceIdentifierObject;
 import cloud.codestore.jsonapi.resource.ResourceObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -131,7 +132,7 @@ class ToManyRelationshipTest
                       "body": "I like XML better"
                     }
                   }]
-                }""", SingleResourceDocument.class);
+                }""", new TypeReference<>() {});
 
         Article article = document.getData();
         assertThat(article).isNotNull();

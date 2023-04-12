@@ -2,6 +2,7 @@ package cloud.codestore.jsonapi.document;
 
 import cloud.codestore.jsonapi.Person;
 import cloud.codestore.jsonapi.TestObjectReader;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -60,7 +61,7 @@ class SingleResourceDocumentTest {
                           "lastName": "Doe"
                         }
                       }
-                    }""", SingleResourceDocument.class);
+                    }""", new TypeReference<>() {});
 
             assertThat(jsonApiDocument).isNotNull();
             Person person = jsonApiDocument.getData();

@@ -7,6 +7,7 @@ import cloud.codestore.jsonapi.TestObjectWriter;
 import cloud.codestore.jsonapi.document.SingleResourceDocument;
 import cloud.codestore.jsonapi.resource.ResourceIdentifierObject;
 import cloud.codestore.jsonapi.resource.ResourceObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -104,7 +105,7 @@ class ToOneRelationshipTest
                       "lastName": "Doe"
                     }
                   }]
-                }""", SingleResourceDocument.class);
+                }""", new TypeReference<>() {});
 
         Article article = document.getData();
         assertThat(article).isNotNull();

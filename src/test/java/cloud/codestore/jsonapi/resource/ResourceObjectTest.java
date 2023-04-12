@@ -6,6 +6,7 @@ import cloud.codestore.jsonapi.relationship.Relationship;
 import cloud.codestore.jsonapi.relationship.ToManyRelationship;
 import cloud.codestore.jsonapi.relationship.ToOneRelationship;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,9 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("A resource object")
-public
-class ResourceObjectTest {
-    private static final String HREF = "http://localhost:8080";
+public class ResourceObjectTest {
     private static final String TYPE = "testType";
     private static final String ID = "testId";
 
@@ -139,7 +138,7 @@ class ResourceObjectTest {
                           "lastName": "Doe"
                         }
                       }
-                    }""", SingleResourceDocument.class);
+                    }""", new TypeReference<>() {});
 
             Person person = document.getData();
             assertThat(person.getType()).isEqualTo("person");
@@ -162,7 +161,7 @@ class ResourceObjectTest {
                           }
                         }
                       }
-                    }""", SingleResourceDocument.class);
+                    }""", new TypeReference<>() {});
 
             Article article = document.getData();
             assertThat(article.author).isNotNull();
@@ -187,7 +186,7 @@ class ResourceObjectTest {
                           }
                         }
                       }
-                    }""", SingleResourceDocument.class);
+                    }""", new TypeReference<>() {});
 
             Article article = document.getData();
             assertThat(article.comments).isNotNull();
@@ -232,7 +231,7 @@ class ResourceObjectTest {
                               }
                             }
                           }
-                        }""", SingleResourceDocument.class);
+                        }""", new TypeReference<>() {});
 
                 var resource = document.getData();
                 assertToOneRelationship(resource.toOne, new ResourceIdentifierObject("address", "54321"));
@@ -252,7 +251,7 @@ class ResourceObjectTest {
                               }
                             }
                           }
-                        }""", SingleResourceDocument.class);
+                        }""", new TypeReference<>() {});
 
                 var resource = document.getData();
                 assertToOneRelationship(resource.toOne, null);
@@ -276,7 +275,7 @@ class ResourceObjectTest {
                               }
                             }
                           }
-                        }""", SingleResourceDocument.class);
+                        }""", new TypeReference<>() {});
 
                 var resource = document.getData();
                 assertToManyRelationship(resource.toMany);
@@ -296,7 +295,7 @@ class ResourceObjectTest {
                               }
                             }
                           }
-                        }""", SingleResourceDocument.class);
+                        }""", new TypeReference<>() {});
 
                 var resource = document.getData();
                 assertEmptyToManyRelationship(resource.toMany);
