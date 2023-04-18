@@ -30,11 +30,11 @@ public class Article extends ResourceObject {
         super("article", id);
         this.title = title;
 
-        this.author = new ToOneRelationship<>(author);
+        this.author = ResourceObject.asRelationship(author);
         this.author.setRelatedResourceLink("https://example.com/articles/" + id + "/author");
         this.author.setSelfLink("https://example.com/articles/" + id + "/relationships/author");
 
-        this.comments = new ToManyRelationship<>(comments);
+        this.comments = ResourceObject.asRelationship(comments);
 
         setSelfLink("https://example.com/articles/" + id);
     }
