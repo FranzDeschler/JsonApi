@@ -1,6 +1,5 @@
 package cloud.codestore.jsonapi.relationship;
 
-import cloud.codestore.jsonapi.internal.DeserializedToManyRelationship;
 import cloud.codestore.jsonapi.resource.ResourceIdentifierObject;
 import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -8,16 +7,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
  * Represents a to-many relationship.
  */
-@JsonDeserialize(as = DeserializedToManyRelationship.class)
-public class ToManyRelationship extends Relationship {
+@JsonDeserialize //override deserializer from base class to avoid recursive call
+public class ToManyRelationship<T extends ResourceObject> extends Relationship<T> {
     private ResourceIdentifierObject[] data;
-    private ResourceObject[] relatedResource;
+    private T[] relatedResource;
 
     /**
      * Creates a new relationship without any links, data or meta information.
@@ -39,7 +37,7 @@ public class ToManyRelationship extends Relationship {
      *
      * @param resourceObject the related resource. May be {@code null}.
      */
-    public ToManyRelationship(ResourceObject[] resourceObject) {
+    public ToManyRelationship(T[] resourceObject) {
         setRelatedResource(resourceObject);
     }
 
@@ -47,12 +45,12 @@ public class ToManyRelationship extends Relationship {
      * @param resourceObjects the related resources of this relationship. May be {@code null}.
      */
     @JsonIgnore
-    public ToManyRelationship setRelatedResource(ResourceObject[] resourceObjects) {
+    public ToManyRelationship<T> setRelatedResource(T[] resourceObjects) {
         this.relatedResource = resourceObjects;
         if (isIncluded()) {
             ResourceIdentifierObject[] resourceIdentifiers = Arrays.stream(resourceObjects)
-                    .map(ResourceObject::getIdentifier)
-                    .toArray(ResourceIdentifierObject[]::new);
+                                                                   .map(ResourceObject::getIdentifier)
+                                                                   .toArray(ResourceIdentifierObject[]::new);
 
             setData(resourceIdentifiers);
         } else {
@@ -63,35 +61,13 @@ public class ToManyRelationship extends Relationship {
     }
 
     /**
-     * @return the related resources. May be {@code null}.
-     */
-    @JsonIgnore
-    public ResourceObject[] getRelatedResource() {
-        return relatedResource;
-    }
-
-    /**
-     * Returns the related resource objects of a specific type.
-     * This method casts the related resource objects (if present) to the specified type.
+     * Returns the related resource objects if available.
      *
-     * @param type the expected type of the resource objects.
      * @return the resource objects or {@code null} if there are no related resources.
      */
     @JsonIgnore
-    public <T extends ResourceObject> T[] getRelatedResource(Class<T> type) {
-        if (relatedResource == null) {
-            return null;
-        } else {
-            return Arrays.stream(relatedResource)
-                    .map(resourceObject -> {
-                        if (resourceObject.getClass().isAssignableFrom(type)) {
-                            return (T) resourceObject;
-                        } else {
-                            throw new ClassCastException(resourceObject.getClass() + " cannot be cast to " + type);
-                        }
-                    })
-                    .toArray(value -> (T[]) Array.newInstance(type, relatedResource.length));
-        }
+    public T[] getRelatedResource() {
+        return relatedResource;
     }
 
     /**
@@ -109,7 +85,7 @@ public class ToManyRelationship extends Relationship {
      *                               resource identifiers is {@code null} or doesn´t have the same length.
      */
     @JsonSetter("data")
-    public ToManyRelationship setData(ResourceIdentifierObject[] data) {
+    public ToManyRelationship<T> setData(ResourceIdentifierObject[] data) {
         if (relatedResource != null && !relatedResourceCountMatchesResourceIdentifierCount(data)) {
             throw new IllegalStateException("Relationships that contain related resources must contain a resource identifier objects to provide resource linkage.");
         }

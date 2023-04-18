@@ -1,9 +1,10 @@
 package cloud.codestore.jsonapi.relationship;
 
-import cloud.codestore.jsonapi.internal.RelationshipDeserializer;
+import cloud.codestore.jsonapi.internal.DynamicRelationshipDeserializer;
 import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
+import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,16 +17,19 @@ import java.util.Objects;
  * Represents a {@code Relationship Object}.
  * <br/>
  * See <a href="https://jsonapi.org/format/1.0/#document-resource-object-relationships">jsonapi.org</a>
+ *
+ * @param <T> the type of the related resource object.
  */
-@JsonDeserialize(using = RelationshipDeserializer.class)
-public class Relationship {
+@JsonDeserialize(using = DynamicRelationshipDeserializer.class)
+public class Relationship<T extends ResourceObject> {
     private LinksObject links = new LinksObject();
     private MetaInformation meta;
 
     /**
      * Creates a new relationship without any links, data or meta information.
      */
-    public Relationship() {}
+    public Relationship() {
+    }
 
     /**
      * Creates a new relationship with the given link as "related" link.
@@ -40,7 +44,7 @@ public class Relationship {
      * @param link the "self" link of this relationship.
      * @return this object.
      */
-    public Relationship setSelfLink(String link) {
+    public Relationship<T> setSelfLink(String link) {
         links = Objects.requireNonNullElseGet(links, LinksObject::new);
         links.add(new Link(Link.SELF, link));
         return this;
@@ -50,7 +54,7 @@ public class Relationship {
      * @param relatedResourceLink sets the "related" link of this relationship.
      * @return this object.
      */
-    public Relationship setRelatedResourceLink(String relatedResourceLink) {
+    public Relationship<T> setRelatedResourceLink(String relatedResourceLink) {
         links.add(new Link(Link.RELATED, relatedResourceLink));
         return this;
     }
@@ -79,7 +83,7 @@ public class Relationship {
      * @return this object.
      */
     @JsonSetter("meta")
-    public Relationship setMeta(MetaInformation meta) {
+    public Relationship<T> setMeta(MetaInformation meta) {
         this.meta = meta;
         return this;
     }

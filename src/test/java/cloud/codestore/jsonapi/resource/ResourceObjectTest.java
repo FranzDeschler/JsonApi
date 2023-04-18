@@ -70,8 +70,8 @@ public class ResourceObjectTest {
     @DisplayName("must not have a \"relationship\" object if all fields are null")
     void emptyRelationshipValues() {
         ResourceObject resourceObject = new ResourceObject(TYPE, ID) {
-            public Relationship relationship1;
-            public Relationship relationship2;
+            public Relationship<ResourceObject> relationship1;
+            public Relationship<ResourceObject> relationship2;
         };
 
         String json = TestObjectWriter.write(resourceObject.asDocument());
@@ -201,8 +201,8 @@ public class ResourceObjectTest {
         @DisplayName("containing a relationship which is dynamically parsed")
         class DeserializeRelationshipTest {
             private static class DynamicRelationshipTestResource extends ResourceObject {
-                public Relationship toOne;
-                public Relationship toMany;
+                public Relationship<ResourceObject> toOne;
+                public Relationship<ResourceObject> toMany;
 
                 public DynamicRelationshipTestResource() {
                     super("test");
@@ -303,17 +303,17 @@ public class ResourceObjectTest {
         }
     }
 
-    private void assertToOneRelationship(Relationship relationship, ResourceIdentifierObject relatedData) {
+    private void assertToOneRelationship(Relationship<ResourceObject> relationship, ResourceIdentifierObject relatedData) {
         assertThat(relationship).isNotNull();
         assertThat(relationship).isInstanceOf(ToOneRelationship.class);
-        ToOneRelationship toOneRelationship = (ToOneRelationship) relationship;
+        ToOneRelationship<ResourceObject> toOneRelationship = (ToOneRelationship<ResourceObject>) relationship;
         assertThat(toOneRelationship.getData()).isEqualTo(relatedData);
     }
 
-    private void assertToManyRelationship(Relationship relationship) {
+    private void assertToManyRelationship(Relationship<ResourceObject> relationship) {
         assertThat(relationship).isNotNull();
         assertThat(relationship).isInstanceOf(ToManyRelationship.class);
-        ToManyRelationship toManyRelationship = (ToManyRelationship) relationship;
+        ToManyRelationship<ResourceObject> toManyRelationship = (ToManyRelationship<ResourceObject>) relationship;
         assertThat(toManyRelationship.getData()).containsExactlyInAnyOrder(
                 new ResourceIdentifierObject("address", "1"),
                 new ResourceIdentifierObject("address", "2"),
@@ -321,10 +321,10 @@ public class ResourceObjectTest {
         );
     }
 
-    private void assertEmptyToManyRelationship(Relationship relationship) {
+    private void assertEmptyToManyRelationship(Relationship<ResourceObject> relationship) {
         assertThat(relationship).isNotNull();
         assertThat(relationship).isInstanceOf(ToManyRelationship.class);
-        ToManyRelationship toManyRelationship = (ToManyRelationship) relationship;
+        ToManyRelationship<ResourceObject> toManyRelationship = (ToManyRelationship<ResourceObject>) relationship;
         assertThat(toManyRelationship.getData()).isNotNull();
         assertThat(toManyRelationship.getData()).isEmpty();
     }

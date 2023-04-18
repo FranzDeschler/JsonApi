@@ -1,13 +1,14 @@
 package cloud.codestore.jsonapi.document;
 
-import cloud.codestore.jsonapi.Article;
-import cloud.codestore.jsonapi.Comment;
-import cloud.codestore.jsonapi.Person;
-import cloud.codestore.jsonapi.TestObjectWriter;
+import cloud.codestore.jsonapi.*;
 import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.resource.ResourceObject;
-import org.assertj.core.api.Assertions;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FullJsonApiDocumentTest {
     @Test
@@ -20,11 +21,28 @@ class FullJsonApiDocumentTest {
         Article article = new Article("1", "JSON:API paints my bikeshed!", author, comments);
 
         JsonApiDocument document = JsonApiDocument.of(new ResourceObject[]{article})
-                .addLink(new Link(Link.SELF, "https://example.com/articles"))
-                .addLink(new Link(Link.NEXT, "https://example.com/articles?page[offset]=2"))
-                .addLink(new Link(Link.LAST, "https://example.com/articles?page[offset]=10"));
+                                                  .addLink(new Link(Link.SELF, "https://example.com/articles"))
+                                                  .addLink(new Link(Link.NEXT, "https://example.com/articles?page[offset]=2"))
+                                                  .addLink(new Link(Link.LAST, "https://example.com/articles?page[offset]=10"));
 
-        Assertions.assertThat(TestObjectWriter.write(document)).isEqualTo(EXPECTED_JSON);
+        assertThat(TestObjectWriter.write(document)).isEqualTo(EXPECTED_JSON);
+
+        ResourceCollectionDocument<Article> deserializedDocument = TestObjectReader.read(EXPECTED_JSON, new TypeReference<>() {});
+        assertThat(deserializedDocument.getData()).isNotNull();
+        assertThat(deserializedDocument.getData()).hasSize(1);
+
+        Article deserializedArticle = deserializedDocument.getData()[0];
+        assertThat(deserializedArticle.getIdentifier()).isEqualTo(article.getIdentifier());
+
+        List<ResourceObject> includedResources = deserializedDocument.getIncludedResources();
+        assertThat(includedResources).isNotNull();
+        assertThat(includedResources).hasSize(3);
+
+        assertThat(deserializedArticle.author.getRelatedResource()).isNotNull();
+        assertThat(deserializedArticle.author.getRelatedResource()).isSameAs(includedResources.get(0));
+
+        assertThat(deserializedArticle.comments.getRelatedResource()).isNotNull();
+        assertThat(deserializedArticle.comments.getRelatedResource()).hasSize(2);
     }
 
     private static final String EXPECTED_JSON = """

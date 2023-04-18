@@ -6,7 +6,7 @@ import cloud.codestore.jsonapi.internal.VirtualRelationshipsWriter;
 import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
-import cloud.codestore.jsonapi.relationship.Relationship;
+import cloud.codestore.jsonapi.relationship.ToManyRelationship;
 import cloud.codestore.jsonapi.relationship.ToOneRelationship;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
@@ -138,14 +138,25 @@ public abstract class ResourceObject {
     }
 
     /**
-     * Convenient method to create a {@link Relationship} for this {@link ResourceObject}.
-     * The "self" link of this object is set as "related" link of the relationship object.
+     * Convenient method to create a {@link ToOneRelationship} for the given {@link ResourceObject} that will be
+     * included in the resulting JSON:API document.
      *
-     * @return a {@link ToOneRelationship} which returns this {@link ResourceObject} when included.
-     * @throws IllegalStateException if this object has no "self" link.
+     * @param resourceObject a resource object.
+     * @return a {@link ToOneRelationship} which contains the given resource object as related resource.
      */
-    public ToOneRelationship asRelationship() {
-        return new ToOneRelationship(this);
+    public static <T extends ResourceObject> ToOneRelationship<T> asRelationship(T resourceObject) {
+        return new ToOneRelationship<>(resourceObject);
+    }
+
+    /**
+     * Convenient method to create a {@link ToManyRelationship} for the given {@link ResourceObject}s that will be
+     * included in the resulting JSON:API document.
+     *
+     * @param resourceObjects one or more resource objects.
+     * @return a {@link ToManyRelationship} which contains the given resource objects as related resources.
+     */
+    public static <T extends ResourceObject> ToManyRelationship<T> asRelationship(T[] resourceObjects) {
+        return new ToManyRelationship<>(resourceObjects);
     }
 
     /**

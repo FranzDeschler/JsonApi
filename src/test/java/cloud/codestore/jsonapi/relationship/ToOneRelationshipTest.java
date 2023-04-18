@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("A to-one relationship")
 class ToOneRelationshipTest
 {
-    private ToOneRelationship relationship = new ToOneRelationship();
+    private ToOneRelationship<ResourceObject> relationship = new ToOneRelationship<>();
 
     @Test
     @DisplayName("is empty after creation")
@@ -110,9 +110,9 @@ class ToOneRelationshipTest
         Article article = document.getData();
         assertThat(article).isNotNull();
 
-        ToOneRelationship relationship = article.author;
+        ToOneRelationship<Person> relationship = article.author;
         assertThat(relationship.isIncluded()).isTrue();
-        Person author = relationship.getRelatedResource(Person.class);
+        Person author = relationship.getRelatedResource();
         assertThat(author.firstName).isEqualTo("John");
         assertThat(author.lastName).isEqualTo("Doe");
     }

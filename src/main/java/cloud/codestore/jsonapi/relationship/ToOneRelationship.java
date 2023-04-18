@@ -1,6 +1,5 @@
 package cloud.codestore.jsonapi.relationship;
 
-import cloud.codestore.jsonapi.internal.DeserializedToOneRelationship;
 import cloud.codestore.jsonapi.resource.ResourceIdentifierObject;
 import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -11,15 +10,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 /**
  * Represents a to-one relationship.
  */
-@JsonDeserialize(as = DeserializedToOneRelationship.class)
-public class ToOneRelationship extends Relationship {
+@JsonDeserialize //override deserializer from base class to avoid recursive call
+public class ToOneRelationship<T extends ResourceObject> extends Relationship<T> {
     private ResourceIdentifierObject data;
-    private ResourceObject relatedResource;
+    private T relatedResource;
 
     /**
      * Creates a new relationship without any links, data or meta information.
      */
-    public ToOneRelationship() {}
+    public ToOneRelationship() {
+    }
 
     /**
      * Creates a new relationship with the given link as "related" link.
@@ -35,7 +35,7 @@ public class ToOneRelationship extends Relationship {
      *
      * @param resourceObject the related resource. May be {@code null}.
      */
-    public ToOneRelationship(ResourceObject resourceObject) {
+    public ToOneRelationship(T resourceObject) {
         setRelatedResource(resourceObject);
     }
 
@@ -43,30 +43,20 @@ public class ToOneRelationship extends Relationship {
      * @param resourceObject the related resource of this relationship. May be {@code null}.
      */
     @JsonIgnore
-    public ToOneRelationship setRelatedResource(ResourceObject resourceObject) {
+    public ToOneRelationship<T> setRelatedResource(T resourceObject) {
         this.relatedResource = resourceObject;
         setData(resourceObject == null ? null : resourceObject.getIdentifier());
         return this;
     }
 
     /**
-     * @return the related resource of this relationship. May be {@code null}.
-     */
-    @JsonIgnore
-    public ResourceObject getRelatedResource() {
-        return relatedResource;
-    }
-
-    /**
-     * Returns the related resource object of a specific type.
-     * This method casts the related resource object (if present) to the specified type.
+     * Returns the related resource object if available.
      *
-     * @param type the expected type of the resource object.
      * @return the resource object or {@code null} if there is no related resource.
      */
     @JsonIgnore
-    public <T extends ResourceObject> T getRelatedResource(Class<T> type) {
-        return relatedResource == null ? null : (T) relatedResource;
+    public T getRelatedResource() {
+        return relatedResource;
     }
 
     @Override
@@ -89,7 +79,7 @@ public class ToOneRelationship extends Relationship {
      *                               but the given resource identifier is {@code null}.
      */
     @JsonSetter("data")
-    public ToOneRelationship setData(ResourceIdentifierObject data) {
+    public ToOneRelationship<T> setData(ResourceIdentifierObject data) {
         if (relatedResource != null && data == null) {
             throw new IllegalStateException("Relationships that contain a related resource must contain a resource identifier object to provide resource linkage.");
         }

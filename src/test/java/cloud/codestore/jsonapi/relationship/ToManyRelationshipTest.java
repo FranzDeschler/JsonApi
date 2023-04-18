@@ -16,9 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("A to-many relationship")
-class ToManyRelationshipTest
-{
-    private ToManyRelationship relationship = new ToManyRelationship();
+class ToManyRelationshipTest {
+    private ToManyRelationship<ResourceObject> relationship = new ToManyRelationship<>();
 
     @Test
     @DisplayName("is empty after creation")
@@ -32,8 +31,7 @@ class ToManyRelationshipTest
 
     @Test
     @DisplayName("is included after setting a related resource")
-    void include()
-    {
+    void include() {
         assertThat(relationship.isIncluded()).isFalse();
         ResourceObject[] relatedResources = {
                 new ResourceObject("test", "1") {},
@@ -52,17 +50,16 @@ class ToManyRelationshipTest
 
     @Test
     @DisplayName("must have a resource identifier when a related resource is set")
-    void setRelatedResource()
-    {
+    void setRelatedResource() {
         ResourceObject[] relatedResource = {new ResourceObject("test", "123") {}};
         relationship.setRelatedResource(relatedResource);
-        assertThatThrownBy(() -> relationship.setData(null)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> relationship.setData(null)).isInstanceOf(IllegalStateException.class)
+                                                            .hasMessage("Relationships that contain related resources must contain a resource identifier objects to provide resource linkage.");
     }
 
     @Test
     @DisplayName("removes the resource identifier when the resource is removed")
-    void resetRelatedResource()
-    {
+    void resetRelatedResource() {
         ResourceObject[] relatedResource = {new ResourceObject("test", "123") {}};
         relationship.setRelatedResource(relatedResource);
         assertThat(relationship.getRelatedResource()).isNotNull();
@@ -76,8 +73,7 @@ class ToManyRelationshipTest
 
     @Test
     @DisplayName("can contain a single resource identifier object")
-    void containsResourceIdentifier()
-    {
+    void containsResourceIdentifier() {
         relationship.setData(new ResourceIdentifierObject[]{
                 new ResourceIdentifierObject("snippet", "12345"),
                 new ResourceIdentifierObject("snippet", "54321"),
@@ -137,10 +133,10 @@ class ToManyRelationshipTest
         Article article = document.getData();
         assertThat(article).isNotNull();
 
-        ToManyRelationship relationship = article.comments;
+        ToManyRelationship<Comment> relationship = article.comments;
         assertThat(relationship.isIncluded()).isTrue();
 
-        Comment[] comments = relationship.getRelatedResource(Comment.class);
+        Comment[] comments = relationship.getRelatedResource();
         assertThat(comments).hasSize(2);
         assertThat(comments[0]).isInstanceOf(Comment.class);
         assertThat(comments[1]).isInstanceOf(Comment.class);

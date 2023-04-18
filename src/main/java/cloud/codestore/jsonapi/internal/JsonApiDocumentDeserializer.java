@@ -25,17 +25,17 @@ public class JsonApiDocumentDeserializer extends StdDeserializer<JsonApiDocument
     @Override
     public JsonApiDocument deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
         ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
-        ObjectNode relationshipNode = mapper.readTree(jsonParser);
+        ObjectNode documentNode = mapper.readTree(jsonParser);
 
-        if (relationshipNode.has("data")) {
-            JsonNode dataNode = relationshipNode.get("data");
+        if (documentNode.has("data")) {
+            JsonNode dataNode = documentNode.get("data");
             if (dataNode.isObject()) {
-                return mapper.treeToValue(relationshipNode, SingleResourceDocument.class);
+                return mapper.treeToValue(documentNode, SingleResourceDocument.class);
             } else if (dataNode.isArray()) {
-                return mapper.treeToValue(relationshipNode, ResourceCollectionDocument.class);
+                return mapper.treeToValue(documentNode, ResourceCollectionDocument.class);
             }
         }
 
-        return mapper.treeToValue(relationshipNode, SingleResourceDocument.class);
+        return mapper.treeToValue(documentNode, SingleResourceDocument.class);
     }
 }

@@ -5,11 +5,9 @@ import cloud.codestore.jsonapi.internal.JsonApiDocumentDeserializer;
 import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
+import cloud.codestore.jsonapi.relationship.Relationship;
 import cloud.codestore.jsonapi.resource.ResourceObject;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -60,7 +58,7 @@ public abstract class JsonApiDocument {
      * @throws NullPointerException if {@code data} is {@code null}.
      */
     public static <T extends ResourceObject> JsonApiDocument of(T[] data) {
-        return new ResourceCollectionDocument<T>(data);
+        return new ResourceCollectionDocument<>(data);
     }
 
     /**
@@ -201,5 +199,24 @@ public abstract class JsonApiDocument {
     @JsonSetter("links")
     void setLinksObject(LinksObject links) {
         this.links = links;
+    }
+
+    private final List<Relationship<?>> relationships = new LinkedList<>();
+
+    /**
+     * Only for internal use.
+     * Adds a backlink to deserialized, nested relationship.
+     * They will be used for linking relationships to included resources.
+     */
+    public void addRelationshipBacklink(Relationship<?> relationship) {
+        relationships.add(relationship);
+    }
+
+    /**
+     * Only for internal use.
+     */
+    @JsonIgnore
+    public List<Relationship<?>> getRelationshipBacklinks() {
+        return relationships;
     }
 }
