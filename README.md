@@ -149,14 +149,14 @@ In their simplest way, relationships only contains the URL to the related resour
 ```java
 public class Article extends ResourceObject {
     @JsonProperty("title") private String title;
-    @JsonProperty("author") private Relationship author;
-    @JsonProperty("author") private Relationship comments;
+    @JsonProperty("author") private ToOneRelationship<Person> author;
+    @JsonProperty("author") private ToManyRelationship<Comment> comments;
 
     public Article(String id, String title) {
         super("article", id);
         this.title = title;
-        this.author = new Relationship("https://example.com/articles/" + id + "/author");
-        this.comments = new Relationship("https://example.com/articles/" + id + "/comments");
+        this.author = new ToOneRelationship<>("https://example.com/articles/" + id + "/author");
+        this.comments = new ToManyRelationship<>("https://example.com/articles/" + id + "/comments");
     }
 }
 
@@ -199,14 +199,14 @@ to-one and to-many relationships respectively.
 ```java
 public class Article extends ResourceObject {
     @JsonProperty("title") private String title;
-    @JsonProperty("author") private Relationship author;
-    @JsonProperty("author") private Relationship comments;
+    @JsonProperty("author") private ToOneRelationship<Person> author;
+    @JsonProperty("author") private ToManyRelationship<Comment> comments;
 
     public Article(String id, String title, Person author, Comment[] comments) {
         super("article", id);
         this.title = title;
-        this.author = new ToOneRelationship(author);
-        this.comments = new ToManyRelationship(comments);
+        this.author = new ToOneRelationship<>(author);
+        this.comments = new ToManyRelationship<>(comments);
     }
 }
 ```
@@ -314,14 +314,14 @@ Remember to use the appropriate Jackson annotations for setting the fields.
 ```java
 public class Article extends ResourceObject {
     private String title;
-    private Relationship author;
-    private Relationship comments;
+    private ToOneRelationship<Person> author;
+    private ToManyRelationship<Comment> comments;
 
     @JsonCreator
     public Article(
             @JsonProperty("id") String id,
-            @JsonProperty("author") Relationship author,
-            @JsonProperty("comments") Relationship comments
+            @JsonProperty("author") ToOneRelationship<Person> author,
+            @JsonProperty("comments") ToManyRelationship<Comment> comments
     ) {
         super("article", id);
         this.author = author;
@@ -419,8 +419,8 @@ public class Article extends ResourceObject {
 ```
 ```java
 SingleResourceDocument<Article> document = objectMapper.readValue("{...}", new TypeReference<SingleResourceDocument<Article>>() {});
-var authorRelationship = document.getData().getAuthor();
-var author = authorRelationship.getRelatedResource(Person.class);
+ToOneRelationship<Person> authorRelationship = document.getData().getAuthor();
+Person author = authorRelationship.getRelatedResource();
 ```
 
 ## Meta Information
