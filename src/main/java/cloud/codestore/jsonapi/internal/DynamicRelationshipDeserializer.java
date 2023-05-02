@@ -20,8 +20,8 @@ import java.io.IOException;
  * If it is an object or {@code null}, this deserializer returns a {@link ToOneRelationship}.
  * If it is an array, this deserializer returns a {@link ToManyRelationship}.
  */
-public class DynamicRelationshipDeserializer extends StdDeserializer<Relationship<ResourceObject>> {
-    public DynamicRelationshipDeserializer() {
+class DynamicRelationshipDeserializer extends StdDeserializer<Relationship<ResourceObject>> {
+    DynamicRelationshipDeserializer() {
         super(Relationship.class);
     }
 
@@ -32,8 +32,6 @@ public class DynamicRelationshipDeserializer extends StdDeserializer<Relationshi
         ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
         ObjectNode relationshipNode = mapper.readTree(jsonParser);
 
-        // At this point, the node is parsed independently of the rest of the JSON string.
-        // This leads to the drawback, that the RelationshipDeserializerModifier has no access to its parent.
         if (relationshipNode.has("data")) {
             JsonNode dataNode = relationshipNode.get("data");
             if (dataNode.isObject()) {

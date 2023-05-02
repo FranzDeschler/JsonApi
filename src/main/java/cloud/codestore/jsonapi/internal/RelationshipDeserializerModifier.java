@@ -27,11 +27,11 @@ public class RelationshipDeserializerModifier extends BeanDeserializerModifier {
     ) {
         Class<?> beanClass = beanDescription.getBeanClass();
         if (isRelationship(beanClass)) {
-            Class<?> relatedType = beanDescription.getType().containedType(0).getRawClass();
-            if (ResourceObject.class.isAssignableFrom(relatedType)) {
-                return new RelationshipDeserializer(deserializer, beanClass, (Class<? extends ResourceObject>) relatedType);
+            Class<?> relatedResourceType = beanDescription.getType().containedType(0).getRawClass();
+            if (ResourceObject.class.isAssignableFrom(relatedResourceType)) {
+                return new RelationshipDeserializer(deserializer, beanClass, (Class<? extends ResourceObject>) relatedResourceType);
             } else {
-                throw new ClassCastException(relatedType + " is not a subtype of " + ResourceObject.class);
+                throw new ClassCastException(relatedResourceType + " is not a subtype of " + ResourceObject.class);
             }
         }
         return deserializer;
@@ -60,10 +60,6 @@ public class RelationshipDeserializerModifier extends BeanDeserializerModifier {
         public Object deserialize(JsonParser parser, DeserializationContext context) throws IOException {
             Relationship<?> relationship = deserializeRelationship(parser, context);
             JsonApiDocument parent = getParent(parser.getParsingContext().getParent());
-
-            // Note: if the application only defines "Relationship<>" as type in the resource class,
-            // the relationship is dynamically parsed in the DynamicRelationshipDeserializer
-            // which removes the parent node and thus, parent is null at this point!
             if (parent != null) {
                 parent.addRelationshipBacklink(relationship);
             }
@@ -72,12 +68,14 @@ public class RelationshipDeserializerModifier extends BeanDeserializerModifier {
         }
 
         private Relationship<?> deserializeRelationship(JsonParser parser, DeserializationContext context) throws IOException {
-            if (isToManyRelationship(beanClass)) {
+            if (isToOneRelationship(beanClass)) {
+                DeserializedToOneRelationship<?> instance = new DeserializedToOneRelationship<>(relatedType);
+                return (Relationship<?>) super.deserialize(parser, context, instance);
+            } else if (isToManyRelationship(beanClass)) {
                 DeserializedToManyRelationship<?> instance = new DeserializedToManyRelationship<>(relatedType);
                 return (Relationship<?>) super.deserialize(parser, context, instance);
             } else {
-                DeserializedToOneRelationship<?> instance = new DeserializedToOneRelationship<>(relatedType);
-                return (Relationship<?>) super.deserialize(parser, context, instance);
+                return new DynamicRelationshipDeserializer().deserialize(parser, context);
             }
         }
 
@@ -95,6 +93,10 @@ public class RelationshipDeserializerModifier extends BeanDeserializerModifier {
             }
 
             return getParent(parentStreamContext.getParent());
+        }
+
+        private static boolean isToOneRelationship(Class<?> type) {
+            return ToOneRelationship.class.isAssignableFrom(type);
         }
 
         private static boolean isToManyRelationship(Class<?> type) {

@@ -1,6 +1,5 @@
 package cloud.codestore.jsonapi.relationship;
 
-import cloud.codestore.jsonapi.internal.DynamicRelationshipDeserializer;
 import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
@@ -9,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Objects;
 
@@ -20,7 +18,6 @@ import java.util.Objects;
  *
  * @param <T> the type of the related resource object.
  */
-@JsonDeserialize(using = DynamicRelationshipDeserializer.class)
 public class Relationship<T extends ResourceObject> {
     private LinksObject links = new LinksObject();
     private MetaInformation meta;
@@ -93,7 +90,8 @@ public class Relationship<T extends ResourceObject> {
      * in the final JSON.
      * <br/><br/>
      * On client side: indicates whether this relationship refers to resource objects that are included in the
-     * JSON:API document and can be fetched by calling {@link  ToOneRelationship#getRelatedResource()}.
+     * JSON:API document and can be fetched by calling {@link  ToOneRelationship#getRelatedResource()}
+     * or {@link  ToManyRelationship#getRelatedResource()}.
      *
      * @return whether this relationship contains related resources.
      */

@@ -5,14 +5,12 @@ import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Arrays;
 
 /**
  * Represents a to-many relationship.
  */
-@JsonDeserialize //override deserializer from base class to avoid recursive call
 public class ToManyRelationship<T extends ResourceObject> extends Relationship<T> {
     private ResourceIdentifierObject[] data;
     private T[] relatedResource;

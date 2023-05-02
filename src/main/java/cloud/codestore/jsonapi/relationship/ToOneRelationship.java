@@ -5,12 +5,10 @@ import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Represents a to-one relationship.
  */
-@JsonDeserialize //override deserializer from base class to avoid recursive call
 public class ToOneRelationship<T extends ResourceObject> extends Relationship<T> {
     private ResourceIdentifierObject data;
     private T relatedResource;

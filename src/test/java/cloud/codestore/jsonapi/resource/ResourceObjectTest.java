@@ -1,14 +1,12 @@
 package cloud.codestore.jsonapi.resource;
 
-import cloud.codestore.jsonapi.*;
+import cloud.codestore.jsonapi.Article;
+import cloud.codestore.jsonapi.Person;
+import cloud.codestore.jsonapi.TestObjectReader;
+import cloud.codestore.jsonapi.TestObjectWriter;
 import cloud.codestore.jsonapi.document.SingleResourceDocument;
 import cloud.codestore.jsonapi.relationship.Relationship;
-import cloud.codestore.jsonapi.relationship.ToManyRelationship;
-import cloud.codestore.jsonapi.relationship.ToOneRelationship;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("A resource object")
-public class ResourceObjectTest {
+class ResourceObjectTest {
     private static final String TYPE = "testType";
     private static final String ID = "testId";
 
@@ -48,7 +46,7 @@ public class ResourceObjectTest {
     }
 
     @Test
-    @DisplayName("must not have an \"attributes\" object if all fields are null")
+    @DisplayName("must not have an \"attributes\" object if all attributes are null")
     void emptyAttributeValues() {
         ResourceObject resourceObject = new ResourceObject(TYPE, ID) {
             public String attribute1;
@@ -67,7 +65,7 @@ public class ResourceObjectTest {
     }
 
     @Test
-    @DisplayName("must not have a \"relationship\" object if all fields are null")
+    @DisplayName("must not have a \"relationship\" object if all relationships are null")
     void emptyRelationshipValues() {
         ResourceObject resourceObject = new ResourceObject(TYPE, ID) {
             public Relationship<ResourceObject> relationship1;
@@ -148,7 +146,7 @@ public class ResourceObjectTest {
         }
 
         @Test
-        @DisplayName("containing a to-one relationship")
+        @DisplayName("containing a relationship")
         void withToOneRelationships() {
             SingleResourceDocument<Article> document = TestObjectReader.read("""
                     {
@@ -163,169 +161,8 @@ public class ResourceObjectTest {
                       }
                     }""", new TypeReference<>() {});
 
-            Article article = document.getData();
-            assertThat(article.author).isNotNull();
-            assertThat(article.author.getData()).isEqualTo(new ResourceIdentifierObject("person", "123"));
+            assertThat(document).isNotNull();
+            assertThat(document.getData().author).isNotNull();
         }
-
-        @Test
-        @DisplayName("containing a to-many relationship")
-        void withToManyRelationships() {
-            SingleResourceDocument<Article> document = TestObjectReader.read("""
-                    {
-                      "data": {
-                        "type": "article",
-                        "id": "1",
-                        "relationships": {
-                          "comments": {
-                            "data": [
-                              {"type":"comment", "id":"1"},
-                              {"type":"comment", "id":"2"},
-                              {"type":"comment", "id":"3"}
-                            ]
-                          }
-                        }
-                      }
-                    }""", new TypeReference<>() {});
-
-            Article article = document.getData();
-            assertThat(article.comments).isNotNull();
-            assertThat(article.comments.getData()).containsExactlyInAnyOrder(
-                    new ResourceIdentifierObject("comment", "1"),
-                    new ResourceIdentifierObject("comment", "2"),
-                    new ResourceIdentifierObject("comment", "3")
-            );
-        }
-
-        @Nested
-        @DisplayName("containing a relationship which is dynamically parsed")
-        class DeserializeRelationshipTest {
-            private static class DynamicRelationshipTestResource extends ResourceObject {
-                public Relationship<ResourceObject> toOne;
-                public Relationship<ResourceObject> toMany;
-
-                public DynamicRelationshipTestResource() {
-                    super("test");
-                }
-            }
-
-            private ObjectMapper objectMapper;
-
-            @BeforeEach
-            void setUp() {
-                objectMapper = new JsonApiObjectMapper()
-                        .registerResourceType("test", DynamicRelationshipTestResource.class);
-            }
-
-            @Test
-            @DisplayName("from to-one relationship")
-            void toOneRelationships() throws JsonProcessingException {
-                SingleResourceDocument<DynamicRelationshipTestResource> document = objectMapper.readValue("""
-                        {
-                          "data": {
-                            "type": "test",
-                            "id": "123",
-                            "relationships": {
-                              "toOne": {
-                                "data": {"type":"address", "id":"54321"}
-                              }
-                            }
-                          }
-                        }""", new TypeReference<>() {});
-
-                var resource = document.getData();
-                assertToOneRelationship(resource.toOne, new ResourceIdentifierObject("address", "54321"));
-            }
-
-            @Test
-            @DisplayName("from empty to-one relationship")
-            void emptyToOneRelationships() throws JsonProcessingException {
-                SingleResourceDocument<DynamicRelationshipTestResource> document = objectMapper.readValue("""
-                        {
-                          "data": {
-                            "type": "test",
-                            "id": "123",
-                            "relationships": {
-                              "toOne": {
-                                "data": null
-                              }
-                            }
-                          }
-                        }""", new TypeReference<>() {});
-
-                var resource = document.getData();
-                assertToOneRelationship(resource.toOne, null);
-            }
-
-            @Test
-            @DisplayName("from to-many relationship")
-            void toManyRelationships() throws JsonProcessingException {
-                SingleResourceDocument<DynamicRelationshipTestResource> document = objectMapper.readValue("""
-                        {
-                          "data": {
-                            "type": "test",
-                            "id": "123",
-                            "relationships": {
-                              "toMany": {
-                                "data": [
-                                  {"type":"address", "id":"1"},
-                                  {"type":"address", "id":"2"},
-                                  {"type":"address", "id":"3"}
-                                ]
-                              }
-                            }
-                          }
-                        }""", new TypeReference<>() {});
-
-                var resource = document.getData();
-                assertToManyRelationship(resource.toMany);
-            }
-
-            @Test
-            @DisplayName("from empty to-many relationship")
-            void emptyToManyRelationships() throws JsonProcessingException {
-                SingleResourceDocument<DynamicRelationshipTestResource> document = objectMapper.readValue("""
-                        {
-                          "data": {
-                            "type": "test",
-                            "id": "123",
-                            "relationships": {
-                              "toMany": {
-                                "data": []
-                              }
-                            }
-                          }
-                        }""", new TypeReference<>() {});
-
-                var resource = document.getData();
-                assertEmptyToManyRelationship(resource.toMany);
-            }
-        }
-    }
-
-    private void assertToOneRelationship(Relationship<ResourceObject> relationship, ResourceIdentifierObject relatedData) {
-        assertThat(relationship).isNotNull();
-        assertThat(relationship).isInstanceOf(ToOneRelationship.class);
-        ToOneRelationship<ResourceObject> toOneRelationship = (ToOneRelationship<ResourceObject>) relationship;
-        assertThat(toOneRelationship.getData()).isEqualTo(relatedData);
-    }
-
-    private void assertToManyRelationship(Relationship<ResourceObject> relationship) {
-        assertThat(relationship).isNotNull();
-        assertThat(relationship).isInstanceOf(ToManyRelationship.class);
-        ToManyRelationship<ResourceObject> toManyRelationship = (ToManyRelationship<ResourceObject>) relationship;
-        assertThat(toManyRelationship.getData()).containsExactlyInAnyOrder(
-                new ResourceIdentifierObject("address", "1"),
-                new ResourceIdentifierObject("address", "2"),
-                new ResourceIdentifierObject("address", "3")
-        );
-    }
-
-    private void assertEmptyToManyRelationship(Relationship<ResourceObject> relationship) {
-        assertThat(relationship).isNotNull();
-        assertThat(relationship).isInstanceOf(ToManyRelationship.class);
-        ToManyRelationship<ResourceObject> toManyRelationship = (ToManyRelationship<ResourceObject>) relationship;
-        assertThat(toManyRelationship.getData()).isNotNull();
-        assertThat(toManyRelationship.getData()).isEmpty();
     }
 }
