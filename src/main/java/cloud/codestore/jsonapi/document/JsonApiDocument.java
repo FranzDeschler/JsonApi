@@ -47,7 +47,7 @@ public abstract class JsonApiDocument {
      * @throws NullPointerException if {@code data} is {@code null}.
      */
     public static <T extends ResourceObject> JsonApiDocument of(T data) {
-        return new SingleResourceDocument<T>(data);
+        return new SingleResourceDocument<>(data);
     }
 
     /**

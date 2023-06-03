@@ -111,7 +111,7 @@ public class JsonApiDocumentTest
     @DisplayName("does not allow including null resource objects")
     void includeNotNull()
     {
-        JsonApiDocument document = JsonApiDocument.of((MetaInformation) null);
+        JsonApiDocument document = JsonApiDocument.of(new MetaInformation() {});
 
         assertThatThrownBy(() -> document.include(null))
                   .isInstanceOf(NullPointerException.class);
@@ -130,7 +130,7 @@ public class JsonApiDocumentTest
         ResourceObject resourceObject4 = new TestResourceObject("tag", "TagC");
         ResourceObject resourceObject5 = new TestResourceObject("test", "TagA");
 
-        JsonApiDocument document = JsonApiDocument.of((MetaInformation) null);
+        JsonApiDocument document = JsonApiDocument.of(new MetaInformation() {});
         document.include(resourceObject1, resourceObject2, resourceObject3, resourceObject4, resourceObject5);
 
         assertThat(document.getIncludedResources())

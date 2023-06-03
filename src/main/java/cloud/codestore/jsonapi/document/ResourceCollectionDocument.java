@@ -40,6 +40,7 @@ public class ResourceCollectionDocument<T extends ResourceObject> extends JsonAp
      * @throws NullPointerException if {@code meta} is {@code null}.
      */
     public ResourceCollectionDocument(MetaInformation meta) {
+        Objects.requireNonNull(meta);
         setMeta(meta);
     }
 

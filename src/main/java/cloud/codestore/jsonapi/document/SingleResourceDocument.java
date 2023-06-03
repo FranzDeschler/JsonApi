@@ -40,6 +40,7 @@ public class SingleResourceDocument<T extends ResourceObject> extends JsonApiDoc
      * @throws NullPointerException if {@code meta} is {@code null}.
      */
     public SingleResourceDocument(MetaInformation meta) {
+        Objects.requireNonNull(meta);
         setMeta(meta);
     }
 
