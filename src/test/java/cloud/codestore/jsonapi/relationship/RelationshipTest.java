@@ -16,14 +16,14 @@ class RelationshipTest
     @DisplayName("is not included")
     void notIncluded()
     {
-        Assertions.assertThat(new Relationship<>().isIncluded()).isFalse();
+        Assertions.assertThat(new Relationship().isIncluded()).isFalse();
     }
     
     @Test
     @DisplayName("is empty after creation")
     void empty()
     {
-        LinksObject links = new Relationship<>().getLinks();
+        LinksObject links = new Relationship().getLinks();
         Assertions.assertThat(links).isNotNull();
         Assertions.assertThat(links.isEmpty()).isTrue();
     }
@@ -32,7 +32,7 @@ class RelationshipTest
     @DisplayName("can contain a \"related\" link")
     void relatedLink()
     {
-        String json = TestObjectWriter.write(new Relationship<>(HREF));
+        String json = TestObjectWriter.write(new Relationship(HREF));
         Assertions.assertThat(json).isEqualTo("""
                 {
                   "links" : {
@@ -45,7 +45,7 @@ class RelationshipTest
     @DisplayName("can contain a \"self\" link")
     void selfLink()
     {
-        String json = TestObjectWriter.write(new Relationship<>().setSelfLink(HREF));
+        String json = TestObjectWriter.write(new Relationship().setSelfLink(HREF));
         Assertions.assertThat(json).isEqualTo("""
                 {
                   "links" : {
@@ -58,7 +58,7 @@ class RelationshipTest
     @DisplayName("can contain meta-information")
     void canContainMeta()
     {
-        String json = TestObjectWriter.write(new Relationship<>(HREF).setMeta(new DummyMetaInformation()));
+        String json = TestObjectWriter.write(new Relationship(HREF).setMeta(new DummyMetaInformation()));
         Assertions.assertThat(json).isEqualTo("""
                 {
                   "links" : {

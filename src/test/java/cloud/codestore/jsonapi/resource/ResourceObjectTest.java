@@ -68,8 +68,8 @@ class ResourceObjectTest {
     @DisplayName("must not have a \"relationship\" object if all relationships are null")
     void emptyRelationshipValues() {
         ResourceObject resourceObject = new ResourceObject(TYPE, ID) {
-            public Relationship<ResourceObject> relationship1;
-            public Relationship<ResourceObject> relationship2;
+            public Relationship relationship1;
+            public Relationship relationship2;
         };
 
         String json = TestObjectWriter.write(resourceObject.asDocument());

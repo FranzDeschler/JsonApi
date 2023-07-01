@@ -201,14 +201,14 @@ public abstract class JsonApiDocument {
         this.links = links;
     }
 
-    private final List<Relationship<?>> relationships = new LinkedList<>();
+    private final List<Relationship> relationships = new LinkedList<>();
 
     /**
      * Only for internal use.
      * Adds a backlink to deserialized, nested relationship.
      * They will be used for linking relationships to included resources.
      */
-    public void addRelationshipBacklink(Relationship<?> relationship) {
+    public void addRelationshipBacklink(Relationship relationship) {
         relationships.add(relationship);
     }
 
@@ -216,7 +216,7 @@ public abstract class JsonApiDocument {
      * Only for internal use.
      */
     @JsonIgnore
-    public List<Relationship<?>> getRelationshipBacklinks() {
+    public List<Relationship> getRelationshipBacklinks() {
         return relationships;
     }
 }

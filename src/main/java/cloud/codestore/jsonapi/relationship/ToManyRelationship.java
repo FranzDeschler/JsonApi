@@ -11,7 +11,7 @@ import java.util.Arrays;
 /**
  * Represents a to-many relationship.
  */
-public class ToManyRelationship<T extends ResourceObject> extends Relationship<T> {
+public class ToManyRelationship<T extends ResourceObject> extends Relationship {
     private ResourceIdentifierObject[] data;
     private T[] relatedResource;
 

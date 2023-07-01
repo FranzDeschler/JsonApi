@@ -216,8 +216,8 @@ class ToManyRelationshipTest {
         }
 
         private static class DynamicRelationshipTestResource extends ResourceObject {
-            public Relationship<ResourceObject> relationshipWithData;
-            public Relationship<ResourceObject> emptyRelationship;
+            public Relationship relationshipWithData;
+            public Relationship emptyRelationship;
 
             public DynamicRelationshipTestResource() {
                 super("test");

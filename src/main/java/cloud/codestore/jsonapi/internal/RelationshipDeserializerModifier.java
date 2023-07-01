@@ -7,10 +7,7 @@ import cloud.codestore.jsonapi.relationship.ToOneRelationship;
 import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonStreamContext;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
 
@@ -27,7 +24,8 @@ public class RelationshipDeserializerModifier extends BeanDeserializerModifier {
     ) {
         Class<?> beanClass = beanDescription.getBeanClass();
         if (isRelationship(beanClass)) {
-            Class<?> relatedResourceType = beanDescription.getType().containedType(0).getRawClass();
+            JavaType javaType = beanDescription.getType().containedType(0);
+            Class<?> relatedResourceType = javaType == null ? ResourceObject.class : javaType.getRawClass();
             if (ResourceObject.class.isAssignableFrom(relatedResourceType)) {
                 return new RelationshipDeserializer(deserializer, beanClass, (Class<? extends ResourceObject>) relatedResourceType);
             } else {
@@ -58,7 +56,7 @@ public class RelationshipDeserializerModifier extends BeanDeserializerModifier {
 
         @Override
         public Object deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-            Relationship<?> relationship = deserializeRelationship(parser, context);
+            Relationship relationship = deserializeRelationship(parser, context);
             JsonApiDocument parent = getParent(parser.getParsingContext().getParent());
             if (parent != null) {
                 parent.addRelationshipBacklink(relationship);
@@ -67,13 +65,13 @@ public class RelationshipDeserializerModifier extends BeanDeserializerModifier {
             return relationship;
         }
 
-        private Relationship<?> deserializeRelationship(JsonParser parser, DeserializationContext context) throws IOException {
+        private Relationship deserializeRelationship(JsonParser parser, DeserializationContext context) throws IOException {
             if (isToOneRelationship(beanClass)) {
                 DeserializedToOneRelationship<?> instance = new DeserializedToOneRelationship<>(relatedType);
-                return (Relationship<?>) super.deserialize(parser, context, instance);
+                return (Relationship) super.deserialize(parser, context, instance);
             } else if (isToManyRelationship(beanClass)) {
                 DeserializedToManyRelationship<?> instance = new DeserializedToManyRelationship<>(relatedType);
-                return (Relationship<?>) super.deserialize(parser, context, instance);
+                return (Relationship) super.deserialize(parser, context, instance);
             } else {
                 return new DynamicRelationshipDeserializer().deserialize(parser, context);
             }

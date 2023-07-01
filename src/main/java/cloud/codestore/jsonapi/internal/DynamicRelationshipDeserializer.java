@@ -20,15 +20,13 @@ import java.io.IOException;
  * If it is an object or {@code null}, this deserializer returns a {@link ToOneRelationship}.
  * If it is an array, this deserializer returns a {@link ToManyRelationship}.
  */
-class DynamicRelationshipDeserializer extends StdDeserializer<Relationship<ResourceObject>> {
+class DynamicRelationshipDeserializer extends StdDeserializer<Relationship> {
     DynamicRelationshipDeserializer() {
         super(Relationship.class);
     }
 
     @Override
-    public Relationship<ResourceObject> deserialize(
-            JsonParser jsonParser, DeserializationContext context
-    ) throws IOException {
+    public Relationship deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
         ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
         ObjectNode relationshipNode = mapper.readTree(jsonParser);
 

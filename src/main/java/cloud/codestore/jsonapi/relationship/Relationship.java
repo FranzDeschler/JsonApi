@@ -3,7 +3,6 @@ package cloud.codestore.jsonapi.relationship;
 import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
-import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,10 +14,8 @@ import java.util.Objects;
  * Represents a {@code Relationship Object}.
  * <br/>
  * See <a href="https://jsonapi.org/format/1.0/#document-resource-object-relationships">jsonapi.org</a>
- *
- * @param <T> the type of the related resource object.
  */
-public class Relationship<T extends ResourceObject> {
+public class Relationship {
     private LinksObject links = new LinksObject();
     private MetaInformation meta;
 
@@ -41,7 +38,7 @@ public class Relationship<T extends ResourceObject> {
      * @param link the "self" link of this relationship.
      * @return this object.
      */
-    public Relationship<T> setSelfLink(String link) {
+    public Relationship setSelfLink(String link) {
         links = Objects.requireNonNullElseGet(links, LinksObject::new);
         links.add(new Link(Link.SELF, link));
         return this;
@@ -51,7 +48,7 @@ public class Relationship<T extends ResourceObject> {
      * @param relatedResourceLink sets the "related" link of this relationship.
      * @return this object.
      */
-    public Relationship<T> setRelatedResourceLink(String relatedResourceLink) {
+    public Relationship setRelatedResourceLink(String relatedResourceLink) {
         links.add(new Link(Link.RELATED, relatedResourceLink));
         return this;
     }
@@ -80,7 +77,7 @@ public class Relationship<T extends ResourceObject> {
      * @return this object.
      */
     @JsonSetter("meta")
-    public Relationship<T> setMeta(MetaInformation meta) {
+    public Relationship setMeta(MetaInformation meta) {
         this.meta = meta;
         return this;
     }

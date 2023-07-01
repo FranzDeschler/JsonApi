@@ -43,12 +43,12 @@ public class VirtualRelationshipsWriter extends VirtualBeanPropertyWriter {
         if (relationshipProperties == null || relationshipProperties.isEmpty())
             return null;
 
-        Map<String, Relationship<?>> relationships = new TreeMap<>();
+        Map<String, Relationship> relationships = new TreeMap<>();
 
         relationshipProperties.sort(Comparator.comparing(BeanPropertyWriter::getName)); //needed for ordering the included resources
         for (BeanPropertyWriter property : relationshipProperties) {
             property.getMember().fixAccess(true);
-            Relationship<?> relationship = (Relationship<?>) property.get(resourceObject);
+            Relationship relationship = (Relationship) property.get(resourceObject);
             if (relationship != null) {
                 includeRelationship(relationship, ((ResourceObject) resourceObject).getParent());
                 relationships.put(property.getName(), relationship);
@@ -66,7 +66,7 @@ public class VirtualRelationshipsWriter extends VirtualBeanPropertyWriter {
         return new VirtualRelationshipsWriter(beanPropertyDefinition, annotatedClass.getAnnotations(), javaType);
     }
 
-    private void includeRelationship(Relationship<?> relationship, JsonApiDocument document) {
+    private void includeRelationship(Relationship relationship, JsonApiDocument document) {
         if (relationship.isIncluded() && document != null) {
             if (relationship instanceof ToOneRelationship)
                 include((ToOneRelationship<?>) relationship, document);

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 /**
  * Represents a to-one relationship.
  */
-public class ToOneRelationship<T extends ResourceObject> extends Relationship<T> {
+public class ToOneRelationship<T extends ResourceObject> extends Relationship {
     private ResourceIdentifierObject data;
     private T relatedResource;
 

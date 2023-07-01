@@ -16,9 +16,9 @@ class RelationshipLinker {
      * @param relationships     all {@link Relationship relationships} inside the JSON:API document.
      * @param includedResources all included {@link ResourceObject resource objects} inside the JSON:API document.
      */
-    void link(List<Relationship<?>> relationships, List<ResourceObject> includedResources) {
+    void link(List<Relationship> relationships, List<ResourceObject> includedResources) {
         if (!includedResources.isEmpty()) {
-            for (Relationship<?> relationship : relationships) {
+            for (Relationship relationship : relationships) {
                 linkIncludedResourcesToRelationships(includedResources, relationship);
             }
         }
@@ -26,7 +26,7 @@ class RelationshipLinker {
 
     private void linkIncludedResourcesToRelationships(
             List<ResourceObject> includedResources,
-            Relationship<?> relationship
+            Relationship relationship
     ) {
         if (relationship instanceof DeserializedToOneRelationship<?> toOneRelationship) {
             bindIncludedResourcesToRelationship(includedResources, toOneRelationship);
