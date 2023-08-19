@@ -38,9 +38,11 @@ class FullJsonApiDocumentTest {
         assertThat(includedResources).isNotNull();
         assertThat(includedResources).hasSize(3);
 
+        assertThat(deserializedArticle.author.getRelatedResourceLink()).isNotNull();
         assertThat(deserializedArticle.author.getRelatedResource()).isNotNull();
         assertThat(deserializedArticle.author.getRelatedResource()).isSameAs(includedResources.get(0));
 
+        assertThat(deserializedArticle.comments.getRelatedResourceLink()).isNull();
         assertThat(deserializedArticle.comments.getRelatedResource()).isNotNull();
         assertThat(deserializedArticle.comments.getRelatedResource()).hasSize(2);
     }

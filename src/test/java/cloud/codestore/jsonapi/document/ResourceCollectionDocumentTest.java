@@ -22,13 +22,13 @@ class ResourceCollectionDocumentTest {
 
             assertThat(jsonApiDocument).isNotNull();
             assertThat(jsonApiDocument).isInstanceOf(ResourceCollectionDocument.class);
-            assertThat(((ResourceCollectionDocument) jsonApiDocument).getData()).isNotNull().isEmpty();
+            assertThat(((ResourceCollectionDocument<?>) jsonApiDocument).getData()).isNotNull().isEmpty();
         }
 
         @Test
         @DisplayName("containing multiple resource objects")
         void multipleResourceObjects() {
-            ResourceCollectionDocument jsonApiDocument = TestObjectReader.read("""
+            ResourceCollectionDocument<?> jsonApiDocument = TestObjectReader.read("""
                     {
                       "data" : [{
                         "type": "person",

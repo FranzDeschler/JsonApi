@@ -54,6 +54,15 @@ public class Relationship {
     }
 
     /**
+     * @return the "related" link of this relationship or {@code null} if this relationship does not contain a "related" link.
+     */
+    @JsonIgnore
+    public String getRelatedResourceLink() {
+        Link link = links.get(Link.RELATED);
+        return link == null ? null : link.getHref();
+    }
+
+    /**
      * @return a {@link LinksObject} containing the links of this relationship object.
      * The result is never {@code null} but the {@link LinksObject} may be empty.
      */
