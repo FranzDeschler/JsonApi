@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * A custom Jackson deserializer to deserialize {@link MetaInformation} objects.
@@ -21,19 +22,16 @@ public class MetaInformationDeserializer extends StdDeserializer<MetaInformation
 
     /**
      * Creates a new {@link MetaInformationDeserializer}.
+     *
      * @param metaDeserializer an application specific {@link MetaDeserializer}. May be {@code null}.
      */
     public MetaInformationDeserializer(MetaDeserializer metaDeserializer) {
         super(MetaInformation.class);
-        this.metaDeserializer = metaDeserializer;
+        this.metaDeserializer = Objects.requireNonNullElse(metaDeserializer, pointer -> null);
     }
 
     @Override
     public MetaInformation deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
-        if (metaDeserializer == null) {
-            return null;
-        }
-
         JsonStreamContext parsingContext = jsonParser.getParsingContext();
         String pointer = parsingContext.pathAsPointer().toString();
         pointer = addRelationshipPath(pointer);

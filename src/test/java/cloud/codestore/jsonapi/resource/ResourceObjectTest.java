@@ -100,7 +100,7 @@ class ResourceObjectTest {
         }
 
         @Test
-        @DisplayName("ignoring unknown types")
+        @DisplayName("with an unknown types")
         void ignoreUnknownType() {
             ResourceObject resourceObject = TestObjectReader.read("""
                     {
@@ -163,6 +163,30 @@ class ResourceObjectTest {
 
             assertThat(document).isNotNull();
             assertThat(document.getData().author).isNotNull();
+        }
+
+        @Test
+        @DisplayName("containing a JsonApiObject with meta information")
+        void withJsonApiObject() {
+            SingleResourceDocument<Person> document = TestObjectReader.read("""
+                    {
+                      "jsonapi" : {
+                        "version" : "1.0",
+                        "meta" : {
+                          "documentation" : "https://jsonapi.org/format/1.0/"
+                        }
+                      },
+                      "data": {
+                        "type": "person",
+                        "id": "123",
+                        "attributes": {
+                          "firstName": "John",
+                          "lastName": "Doe"
+                        }
+                      }
+                    }""", new TypeReference<>() {});
+
+            assertThat(document.getData()).isNotNull();
         }
     }
 }
