@@ -3,9 +3,12 @@ package cloud.codestore.jsonapi.document;
 import cloud.codestore.jsonapi.meta.MetaInformation;
 import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -17,7 +20,9 @@ import java.util.Objects;
 public class ResourceCollectionDocument<T extends ResourceObject> extends JsonApiDocument {
     private T[] data;
 
-    /** Used internally for deserialization. */
+    /**
+     * Used internally for deserialization.
+     */
     ResourceCollectionDocument() {}
 
     /**
@@ -46,8 +51,8 @@ public class ResourceCollectionDocument<T extends ResourceObject> extends JsonAp
 
     /**
      * @param data the primary data of this JSON:API document.
-     * @throws NullPointerException if {@code data} is {@code null}.
      * @return this object.
+     * @throws NullPointerException if {@code data} is {@code null}.
      */
     @JsonSetter("data")
     public JsonApiDocument setData(T[] data) {
@@ -61,11 +66,28 @@ public class ResourceCollectionDocument<T extends ResourceObject> extends JsonAp
     }
 
     /**
-     * @return the {@link ResourceObject} which was set as the primary data of this JSON:API document
-     * or {@code null} if no primary data was set.
+     * Return the {@link ResourceObject}s which were set as the primary data of this JSON:API document.
+     * <br/><br/>
+     * Note that this method may throw a {@link ClassCastException} if the concrete type of the data-array could not
+     * be derived at compile time. To prevent this, use {@link #getData(Class)} and specify the expected type of the
+     * resource objects explicitly.
+     *
+     * @return the primary data as array or {@code null} if no primary data was set.
      */
     @JsonGetter("data")
     public T[] getData() {
         return data;
+    }
+
+    @JsonIgnore
+    @SuppressWarnings("unchecked")
+    public T[] getData(Class<T> type) {
+        if (data == null) {
+            return null;
+        }
+
+        return Arrays.stream(data)
+                     .map(type::cast)
+                     .toArray(size -> (T[]) Array.newInstance(type, size));
     }
 }
