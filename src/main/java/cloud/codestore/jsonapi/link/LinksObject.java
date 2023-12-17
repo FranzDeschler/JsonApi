@@ -44,6 +44,15 @@ public class LinksObject {
     }
 
     /**
+     * Returns the link associated with the given relation as String.
+     * @param relation the relation of a link.
+     * @return the associated link or {@code null} if there is no link with such a relation.
+     */
+    public String getHref(String relation) {
+        return links.containsKey(relation) ? links.get(relation).getHref() : null;
+    }
+
+    /**
      * @return the {@link Link} objects of this {@link LinksObject} as list.
      * The list is empty, if there are no links, but never {@code null}.
      */
@@ -58,7 +67,7 @@ public class LinksObject {
      * @return the "self" link as String or {@code null} if this {@link LinksObject} does not contain a "self" link.
      */
     public String getSelfLink() {
-        return links.containsKey(Link.SELF) ? links.get(Link.SELF).getHref() : null;
+        return getHref(Link.SELF);
     }
 
     /**
