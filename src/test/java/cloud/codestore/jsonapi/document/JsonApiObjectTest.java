@@ -34,6 +34,33 @@ class JsonApiObjectTest {
                 }""");
     }
 
+    @Test
+    @DisplayName("may contain an array or URIs for all applied extensions")
+    void containsExtensionUris() {
+        JsonApiObject jsonApiObject = new JsonApiObject()
+                .setExtensions("https://jsonapi.org/ext/atomic", "https://jsonapi.org/ext/version");
+        String json = TestObjectWriter.write(jsonApiObject);
+        assertThat(json).isEqualToIgnoringNewLines("""
+                {
+                  "version" : "1.1",
+                  "ext" : [ "https://jsonapi.org/ext/atomic", "https://jsonapi.org/ext/version" ]
+                }""");
+    }
+
+    @Test
+    @DisplayName("may contain an array or URIs for all applied profiles")
+    void containsProfileUris() {
+        JsonApiObject jsonApiObject = new JsonApiObject()
+                .setProfiles("https://example.com/profiles/flexible-pagination", "https://example.com/profiles/resource-versioning");
+
+        String json = TestObjectWriter.write(jsonApiObject);
+        assertThat(json).isEqualToIgnoringNewLines("""
+                {
+                  "version" : "1.1",
+                  "profile" : [ "https://example.com/profiles/flexible-pagination", "https://example.com/profiles/resource-versioning" ]
+                }""");
+    }
+
     @Nested
     @DisplayName("can be deserialized from a JSON string")
     class DeserializationTest {
@@ -45,6 +72,8 @@ class JsonApiObjectTest {
             assertThat(jsonApiObject).isNotNull();
             assertThat(jsonApiObject.getVersion()).isEqualTo("1.0");
             assertThat(jsonApiObject.getMeta()).isNull();
+            assertThat(jsonApiObject.getExtensions()).isNull();
+            assertThat(jsonApiObject.getProfiles()).isNull();
         }
 
         @Test
@@ -73,6 +102,46 @@ class JsonApiObjectTest {
             assertThat(jsonApiObject).isNotNull();
             assertThat(jsonApiObject.getVersion()).isEqualTo("1.0");
             assertThat(jsonApiObject.getMeta()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("which contains extension URIs")
+        void withExtensions() {
+            JsonApiObject jsonApiObject = TestObjectReader.read("""
+                    {
+                      "ext": [
+                        "https://jsonapi.org/ext/atomic",
+                        "https://jsonapi.org/ext/version"
+                      ]
+                    }""", JsonApiObject.class, path -> DummyMetaInformation.class);
+
+            assertThat(jsonApiObject).isNotNull();
+            assertThat(jsonApiObject.getExtensions())
+                    .isNotNull()
+                    .containsExactlyInAnyOrder(
+                            "https://jsonapi.org/ext/atomic",
+                            "https://jsonapi.org/ext/version"
+                    );
+        }
+
+        @Test
+        @DisplayName("which contains profile URIs")
+        void withProfiles() {
+            JsonApiObject jsonApiObject = TestObjectReader.read("""
+                    {
+                      "profile": [
+                        "https://example.com/profiles/flexible-pagination",
+                        "https://example.com/profiles/resource-versioning"
+                      ]
+                    }""", JsonApiObject.class, path -> DummyMetaInformation.class);
+
+            assertThat(jsonApiObject).isNotNull();
+            assertThat(jsonApiObject.getProfiles())
+                    .isNotNull()
+                    .containsExactlyInAnyOrder(
+                            "https://example.com/profiles/flexible-pagination",
+                            "https://example.com/profiles/resource-versioning"
+                    );
         }
     }
 }

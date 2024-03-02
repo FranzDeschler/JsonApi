@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -16,12 +17,14 @@ import java.util.Objects;
 public class JsonApiObject {
     private final String version;
     private MetaInformation meta;
+    private String[] extensions;
+    private String[] profiles;
 
     /**
      * Creates a new JSON:API Object with "version" set to "1.1".
      */
     public JsonApiObject() {
-        this("1.1", null);
+        this("1.1", null, null, null);
     }
 
     /**
@@ -38,9 +41,16 @@ public class JsonApiObject {
      * Used internally for deserialization.
      */
     @JsonCreator
-    JsonApiObject(@JsonProperty("version") String version, @JsonProperty("meta") MetaInformation meta) {
+    JsonApiObject(
+            @JsonProperty("version") String version,
+            @JsonProperty("meta") MetaInformation meta,
+            @JsonProperty("ext") String[] extensions,
+            @JsonProperty("profile") String[] profiles
+    ) {
         this.version = Objects.requireNonNullElse(version, "1.0");
         this.meta = meta;
+        this.extensions = extensions;
+        this.profiles = profiles;
     }
 
     /**
@@ -68,5 +78,41 @@ public class JsonApiObject {
     public JsonApiObject setMeta(MetaInformation meta) {
         this.meta = meta;
         return this;
+    }
+
+    /**
+     * @param extensions an array of URIs for all applied extensions.
+     * @return this object.
+     */
+    @JsonSetter("ext")
+    public JsonApiObject setExtensions(String... extensions) {
+        this.extensions = extensions;
+        return this;
+    }
+
+    /**
+     * @param profiles an array of URIs for all applied profiles.
+     * @return this object.
+     */
+    @JsonSetter("profile")
+    public JsonApiObject setProfiles(String... profiles) {
+        this.profiles = profiles;
+        return this;
+    }
+
+    /**
+     * @return a list of URIs for all applied extensions. May be {@code null}.
+     */
+    @JsonSetter("ext")
+    public List<String> getExtensions() {
+        return extensions == null ? null : List.of(extensions);
+    }
+
+    /**
+     * @return a list of URIs for all applied profiles. May be {@code null}.
+     */
+    @JsonSetter("profile")
+    public List<String> getProfiles() {
+        return profiles == null ? null : List.of(profiles);
     }
 }
