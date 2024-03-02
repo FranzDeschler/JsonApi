@@ -12,12 +12,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("A jsonapi object")
 class JsonApiObjectTest {
     @Test
-    @DisplayName("returns 1.0 as version")
+    @DisplayName("returns 1.1 as version")
     void version1() {
         String json = TestObjectWriter.write(new JsonApiObject());
         assertThat(json).isEqualToIgnoringNewLines("""
                 {
-                  "version" : "1.0"
+                  "version" : "1.1"
                 }""");
     }
 
@@ -27,7 +27,7 @@ class JsonApiObjectTest {
         String json = TestObjectWriter.write(new JsonApiObject().setMeta(new DummyMetaInformation()));
         assertThat(json).isEqualToIgnoringNewLines("""
                 {
-                  "version" : "1.0",
+                  "version" : "1.1",
                   "meta" : {
                     "info" : "dummy meta info"
                   }

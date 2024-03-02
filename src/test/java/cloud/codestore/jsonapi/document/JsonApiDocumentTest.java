@@ -34,7 +34,7 @@ public class JsonApiDocumentTest
         assertThat(json).startsWith("""
                 {
                   "jsonapi" : {
-                    "version" : "1.0"
+                    "version" : "1.1"
                   },
                 """);
     }

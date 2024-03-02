@@ -18,10 +18,10 @@ public class JsonApiObject {
     private MetaInformation meta;
 
     /**
-     * Creates a new JSON:API Object with "version" set to "1.0".
+     * Creates a new JSON:API Object with "version" set to "1.1".
      */
     public JsonApiObject() {
-        this("1.0", null);
+        this("1.1", null);
     }
 
     /**
