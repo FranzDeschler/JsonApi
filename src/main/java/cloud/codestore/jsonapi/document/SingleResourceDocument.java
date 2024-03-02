@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -42,6 +43,23 @@ public class SingleResourceDocument<T extends ResourceObject> extends JsonApiDoc
     public SingleResourceDocument(MetaInformation meta) {
         Objects.requireNonNull(meta);
         setMeta(meta);
+    }
+
+    /**
+     * Creates a new {@link SingleResourceDocument} with the given extension members.
+     *
+     * @param extensionMembers one or more members defined by an applied extension.
+     * @throws NullPointerException if {@code extensionMembers} is {@code null}.
+     * @throws IllegalArgumentException if {@code extensionMembers} is empty.
+     * @throws IllegalArgumentException if the name of one or more extension members is invalid.
+     */
+    public SingleResourceDocument(Map<String, Object> extensionMembers) {
+        Objects.requireNonNull(extensionMembers);
+        if (extensionMembers.isEmpty()) {
+            throw new IllegalArgumentException("Extension members must not be empty");
+        }
+
+        setExtensionMembers(extensionMembers);
     }
 
     /**

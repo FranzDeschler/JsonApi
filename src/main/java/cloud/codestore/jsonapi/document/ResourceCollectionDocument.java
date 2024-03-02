@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -47,6 +48,23 @@ public class ResourceCollectionDocument<T extends ResourceObject> extends JsonAp
     public ResourceCollectionDocument(MetaInformation meta) {
         Objects.requireNonNull(meta);
         setMeta(meta);
+    }
+
+    /**
+     * Creates a new {@link ResourceCollectionDocument} with the given extension members.
+     *
+     * @param extensionMembers one or more members defined by an applied extension.
+     * @throws NullPointerException if {@code extensionMembers} is {@code null}.
+     * @throws IllegalArgumentException if {@code extensionMembers} is empty.
+     * @throws IllegalArgumentException if the name of one or more extension members is invalid.
+     */
+    public ResourceCollectionDocument(Map<String, Object> extensionMembers) {
+        Objects.requireNonNull(extensionMembers);
+        if (extensionMembers.isEmpty()) {
+            throw new IllegalArgumentException("Extension members must not be empty");
+        }
+
+        setExtensionMembers(extensionMembers);
     }
 
     /**

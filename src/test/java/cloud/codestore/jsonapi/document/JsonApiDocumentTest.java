@@ -1,32 +1,33 @@
 package cloud.codestore.jsonapi.document;
 
 import cloud.codestore.jsonapi.DummyMetaInformation;
+import cloud.codestore.jsonapi.TestObjectReader;
 import cloud.codestore.jsonapi.TestObjectWriter;
 import cloud.codestore.jsonapi.meta.MetaInformation;
 import cloud.codestore.jsonapi.resource.ResourceObject;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("A JSON:API document")
-public class JsonApiDocumentTest
-{
+public class JsonApiDocumentTest {
     private static final String HREF = "http://localhost:8080";
 
     @Test
     @DisplayName("does not allow null as resource")
-    void resourceNotNull()
-    {
+    void resourceNotNull() {
         assertThatThrownBy(() -> JsonApiDocument.of((ResourceObject) null))
-                  .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
     @DisplayName("can contain a json api object")
-    void includeJsonApiObject()
-    {
+    void includeJsonApiObject() {
         String json = TestObjectWriter.write(
                 JsonApiDocument.of(new TestResourceObject("test", "1"))
                                .setJsonapiObject(new JsonApiObject())
@@ -41,8 +42,7 @@ public class JsonApiDocumentTest
 
     @Test
     @DisplayName("can contain meta-information")
-    void containsMeta()
-    {
+    void containsMeta() {
         String json = TestObjectWriter.write(
                 JsonApiDocument.of(new DummyMetaInformation())
         );
@@ -55,9 +55,44 @@ public class JsonApiDocumentTest
     }
 
     @Test
+    @DisplayName("can contain extension members")
+    void containsExtensionMembers() {
+        String json = TestObjectWriter.write(
+                JsonApiDocument.of(Map.of("version:id", "1"))
+        );
+        assertThat(json).isEqualTo("""
+                {
+                  "version:id" : "1"
+                }""");
+    }
+
+    @Test
+    @DisplayName("validates the format of extention member names")
+    void validateExtensionMembers() {
+        assertThatThrownBy(() -> JsonApiDocument.of((Map<String, Object>) null))
+                .isInstanceOf(NullPointerException.class);
+
+        assertThatThrownBy(() -> JsonApiDocument.of(Map.of()))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThatThrownBy(() -> new SingleResourceDocument<>(new DummyMetaInformation()).setExtensionMember(null, "test"))
+                .isInstanceOf(NullPointerException.class);
+
+        assertThatThrownBy(() -> JsonApiDocument.of(Map.of("invalidExtensionMember", "1")))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("supports adding extension members")
+    void supportAddingExtensionMembers() {
+        var document = JsonApiDocument.of(new DummyMetaInformation());
+        document.setExtensionMember("dummy:member", "Hello, World!");
+        assertThat(document.getExtensionMember("dummy:member")).isEqualTo("Hello, World!");
+    }
+
+    @Test
     @DisplayName("can contain a \"self\" link")
-    void containsSelfLink()
-    {
+    void containsSelfLink() {
         String json = TestObjectWriter.write(
                 JsonApiDocument.of(new DummyMetaInformation()).setSelfLink(HREF)
         );
@@ -74,8 +109,7 @@ public class JsonApiDocumentTest
 
     @Test
     @DisplayName("sets itself as parent of primary data")
-    void setsParentOnResource()
-    {
+    void setsParentOnResource() {
         ResourceObject resourceObject = new TestResourceObject("test", "1");
         JsonApiDocument jsonApiDocument = JsonApiDocument.of(resourceObject);
         assertThat(resourceObject.getParent()).isSameAs(jsonApiDocument);
@@ -83,8 +117,7 @@ public class JsonApiDocumentTest
 
     @Test
     @DisplayName("sets itself as parent of primary data array")
-    void setsParentOnResources()
-    {
+    void setsParentOnResources() {
         ResourceObject resourceObject1 = new TestResourceObject("test", "1");
         ResourceObject resourceObject2 = new TestResourceObject("test", "2");
         ResourceObject resourceObject3 = new TestResourceObject("test", "3");
@@ -102,28 +135,25 @@ public class JsonApiDocumentTest
 
     @Test
     @DisplayName("does not include resources by default")
-    void emptyIncludes()
-    {
-        assertThat(new SingleResourceDocument().getIncludedResources()).isEmpty();
+    void emptyIncludes() {
+        assertThat(new SingleResourceDocument<>().getIncludedResources()).isEmpty();
     }
 
     @Test
     @DisplayName("does not allow including null resource objects")
-    void includeNotNull()
-    {
+    void includeNotNull() {
         JsonApiDocument document = JsonApiDocument.of(new MetaInformation() {});
 
         assertThatThrownBy(() -> document.include(null))
-                  .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class);
 
         assertThatThrownBy(() -> document.include(new ResourceObject[]{null}))
-                  .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
     @DisplayName("ignores included duplicates")
-    void ignoreIncludedDuplicates()
-    {
+    void ignoreIncludedDuplicates() {
         ResourceObject resourceObject1 = new TestResourceObject("tag", "TagA");
         ResourceObject resourceObject2 = new TestResourceObject("tag", "TagB");
         ResourceObject resourceObject3 = new TestResourceObject("tag", "TagA");
@@ -134,14 +164,30 @@ public class JsonApiDocumentTest
         document.include(resourceObject1, resourceObject2, resourceObject3, resourceObject4, resourceObject5);
 
         assertThat(document.getIncludedResources())
-                  .containsExactlyInAnyOrder(resourceObject1, resourceObject2, resourceObject4, resourceObject5);
+                .containsExactlyInAnyOrder(resourceObject1, resourceObject2, resourceObject4, resourceObject5);
     }
 
-    public static class TestResourceObject extends ResourceObject
-    {
-        TestResourceObject(String type, String id)
-        {
+    public static class TestResourceObject extends ResourceObject {
+        TestResourceObject(String type, String id) {
             super(type, id);
+        }
+    }
+
+    @Nested
+    @DisplayName("can be deserialized from a JSON string")
+    class DeserializeTest {
+        @Test
+        @DisplayName("containing extension members")
+        void withExtensionMembers() {
+            JsonApiDocument jsonApiDocument = TestObjectReader.read("""
+                    {
+                      "version:id" : "1"
+                    }""", JsonApiDocument.class);
+
+            assertThat(jsonApiDocument).isNotNull();
+            assertThat(jsonApiDocument.getExtensionMember("version:id"))
+                    .isNotNull()
+                    .isEqualTo("1");
         }
     }
 }

@@ -11,10 +11,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a JSON:API document.<br/>
@@ -38,6 +35,7 @@ public abstract class JsonApiDocument {
     private List<ResourceObject> includedResources = new LinkedList<>();
     private LinksObject links = new LinksObject();
     private MetaInformation meta;
+    private Map<String, Object> extensionMembers = new HashMap<>();
 
     /**
      * Factory method to create a JSON:API document which contains a single {@link ResourceObject resource object} as its primary data.
@@ -70,6 +68,19 @@ public abstract class JsonApiDocument {
      */
     public static JsonApiDocument of(MetaInformation meta) {
         return new SingleResourceDocument<>(meta);
+    }
+
+    /**
+     * Factory method to create a JSON:API document which only contains extension members.
+     *
+     * @param extensionMembers one or more members defined by an applied extension.
+     * @return a new {@link JsonApiDocument JSON:API document}.
+     * @throws NullPointerException if {@code extensionMembers} is {@code null}.
+     * @throws IllegalArgumentException if {@code extensionMembers} is empty.
+     * @throws IllegalArgumentException if the name of one or more extension members is invalid.
+     */
+    public static JsonApiDocument of(Map<String, Object> extensionMembers) {
+        return new SingleResourceDocument<>(extensionMembers);
     }
 
     /**
@@ -132,6 +143,7 @@ public abstract class JsonApiDocument {
 
     /**
      * @param meta a {@link MetaInformation meta object} containing non-standard meta-information about this JSON:API document.
+     * @return this object.
      */
     @JsonSetter("meta")
     public JsonApiDocument setMeta(MetaInformation meta) {
@@ -145,6 +157,53 @@ public abstract class JsonApiDocument {
     @JsonGetter("meta")
     public MetaInformation getMeta() {
         return meta;
+    }
+
+    /**
+     * @param extensionMembers the extension members to set on this JSON:API document.
+     * @return this object.
+     * @throws NullPointerException if {@code extensionMembers} is {@code null}.
+     * @throws IllegalArgumentException if the name of one or more members is invalid.
+     */
+    public JsonApiDocument setExtensionMembers(Map<String, Object> extensionMembers) {
+        Objects.requireNonNull(extensionMembers);
+        this.extensionMembers.clear();
+        for (var entry : extensionMembers.entrySet()) {
+            setExtensionMember(entry.getKey(), entry.getValue());
+        }
+
+        return this;
+    }
+
+    /**
+     * Adds an extension member to this JSON:API document.
+     * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
+     * @param value the corresponding value of the member.
+     * @return this object.
+     * @throws NullPointerException if {@code memberName} is {@code null}.
+     * @throws IllegalArgumentException if {@code memberName} is invalid.
+     */
+    public JsonApiDocument setExtensionMember(String memberName, Object value) {
+        Objects.requireNonNull(memberName);
+        if (!memberName.contains(":")) {
+            throw new IllegalArgumentException("Invalid extension member '" + memberName + "'. " +
+                                               "Extension member names must follow the pattern <namespace>:<name>");
+        }
+
+        extensionMembers.put(memberName, value);
+        return this;
+    }
+
+    /**
+     * Returns the value of the given extension member name.
+     * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
+     * @return the associated value or {@code null}.
+     * @throws NullPointerException if {@code memberName} is {@code null}.
+     */
+    @JsonIgnore
+    public Object getExtensionMember(String memberName) {
+        Objects.requireNonNull(memberName);
+        return extensionMembers.get(memberName);
     }
 
     /**
@@ -189,7 +248,7 @@ public abstract class JsonApiDocument {
         return false;
     }
 
-    // ===== used internally for deserialization =====
+    // ===== used internally for serialization / deserialization =====
 
     @JsonSetter("included")
     void setIncludedResources(List<ResourceObject> includedResources) {
@@ -218,5 +277,25 @@ public abstract class JsonApiDocument {
     @JsonIgnore
     public List<Relationship> getRelationshipBacklinks() {
         return relationships;
+    }
+
+    /**
+     * Used to serialize extension members.
+     */
+    @JsonAnyGetter
+    private Map<String, Object> getExtensionMembers() {
+        return extensionMembers;
+    }
+
+    /**
+     * Adds any top level property as extension member if the key is a valid extension member name.
+     * @param key a valid extension member name.
+     * @param value the corresponding value.
+     */
+    @JsonAnySetter
+    private void setDeserializedExtensionMember(String key, Object value) {
+        if (!key.startsWith("@") && key.contains(":")) {
+            setExtensionMember(key, value);
+        }
     }
 }
