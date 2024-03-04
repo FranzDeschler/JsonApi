@@ -27,6 +27,7 @@ public class Link {
     public static final String PREV = "prev";
     public static final String NEXT = "next";
     public static final String ABOUT = "about";
+    public static final String TYPE = "type";
     public static final String DESCRIBEDBY = "describedby";
 
     private String href;

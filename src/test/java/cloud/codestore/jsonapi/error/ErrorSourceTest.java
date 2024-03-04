@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("An error source object")
 class ErrorSourceTest {
     @Test
-    @DisplayName("can contain a pointer")
+    @DisplayName("can contain a JSON pointer")
     void containsPointer() {
         String json = TestObjectWriter.write(
                 new ErrorSource().setPointer("/foo/bar")
@@ -31,6 +31,18 @@ class ErrorSourceTest {
         assertThat(json).isEqualTo("""
                 {
                   "parameter" : "filter[title]"
+                }""");
+    }
+
+    @Test
+    @DisplayName("can contain a header")
+    void containsHeader() {
+        String json = TestObjectWriter.write(
+                new ErrorSource().setHeader("X-API-VERSION")
+        );
+        assertThat(json).isEqualTo("""
+                {
+                  "header" : "X-API-VERSION"
                 }""");
     }
 
@@ -60,6 +72,21 @@ class ErrorSourceTest {
 
             assertThat(source).isNotNull();
             assertThat(source.getParameter()).isEqualTo("filter[title]");
+            assertThat(source.getPointer()).isNull();
+            assertThat(source.getHeader()).isNull();
+        }
+
+        @Test
+        @DisplayName("which contains a header")
+        void pointerErrorHeader() {
+            ErrorSource source = TestObjectReader.read("""
+                    {
+                      "header" : "X-API-VERSION"
+                    }""", ErrorSource.class);
+
+            assertThat(source).isNotNull();
+            assertThat(source.getHeader()).isEqualTo("X-API-VERSION");
+            assertThat(source.getParameter()).isNull();
             assertThat(source.getPointer()).isNull();
         }
     }

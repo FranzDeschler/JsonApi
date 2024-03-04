@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 public class ErrorSource {
     private String pointer;
     private String parameter;
+    private String header;
 
     /**
      * @return a JSON Pointer [<a href="https://www.rfc-editor.org/rfc/rfc6901">RFC6901</a>] to the associated entity in the request document which caused the error.
@@ -46,6 +47,24 @@ public class ErrorSource {
     @JsonSetter("parameter")
     public ErrorSource setParameter(String parameter) {
         this.parameter = parameter;
+        return this;
+    }
+
+    /**
+     * @return the name of a single request header which caused the error.
+     */
+    @JsonGetter("header")
+    public String getHeader() {
+        return header;
+    }
+
+    /**
+     * @param header the name of a single request header which caused the error.
+     * @return this object.
+     */
+    @JsonSetter("header")
+    public ErrorSource setHeader(String header) {
+        this.header = header;
         return this;
     }
 }
