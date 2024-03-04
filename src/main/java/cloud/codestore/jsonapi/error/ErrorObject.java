@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 /**
  * Represents a JSON:API error object.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#error-objects">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#error-objects">jsonapi.org</a>
  */
 @JsonPropertyOrder({"id", "links", "status", "code", "title", "detail", "source", "meta"})
 public class ErrorObject {

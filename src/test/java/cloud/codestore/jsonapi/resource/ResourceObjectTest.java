@@ -173,7 +173,7 @@ class ResourceObjectTest {
                       "jsonapi" : {
                         "version" : "1.0",
                         "meta" : {
-                          "documentation" : "https://jsonapi.org/format/1.0/"
+                          "documentation" : "https://jsonapi.org/format/1.1/"
                         }
                       },
                       "data": {

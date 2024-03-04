@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 /**
  * Represents the source of an error.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#error-objects">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#error-objects">jsonapi.org</a>
  */
 public class ErrorSource {
     private String pointer;

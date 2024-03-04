@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Represents a {@code Links} object.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#document-links">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#document-links">jsonapi.org</a>
  */
 @JsonDeserialize(using = LinksObjectDeserializer.class)
 public class LinksObject {

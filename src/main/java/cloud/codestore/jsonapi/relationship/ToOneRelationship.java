@@ -22,7 +22,7 @@ public class ToOneRelationship<T extends ResourceObject> extends Relationship {
     /**
      * Creates a new relationship with the given link as "related" link.
      *
-     * @param relatedResourceLink a <a href="https://jsonapi.org/format/1.0/#document-resource-object-related-resource-links">related resource link</a>.
+     * @param relatedResourceLink a <a href="https://jsonapi.org/format/1.1/#document-resource-object-related-resource-links">related resource link</a>.
      */
     public ToOneRelationship(String relatedResourceLink) {
         super(relatedResourceLink);

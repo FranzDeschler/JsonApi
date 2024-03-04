@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonAppend;
 /**
  * Represents a JSON:API resource object.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#document-resource-objects">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#document-resource-objects">jsonapi.org</a>
  */
 @JsonAppend(props = {
         @JsonAppend.Prop(value = VirtualAttributesWriter.class, name = "attributes"),

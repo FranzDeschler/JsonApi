@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * Represents a JSON:API document containing a single resource object as primary data.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#document-top-level">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#document-top-level">jsonapi.org</a>
  */
 @JsonDeserialize //override deserializer from base class to avoid recursive call
 public class SingleResourceDocument<T extends ResourceObject> extends JsonApiDocument {

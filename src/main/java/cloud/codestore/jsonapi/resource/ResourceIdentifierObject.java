@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * Represents a {@code Resource Identifier Object}.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#document-resource-identifier-objects">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#document-resource-identifier-objects">jsonapi.org</a>
  */
 public class ResourceIdentifierObject {
     private String type;

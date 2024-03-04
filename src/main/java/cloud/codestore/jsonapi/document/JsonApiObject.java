@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * Represents a JSON:API Object which contains information about the implementation of the JSON:API document.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#document-jsonapi-object">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#document-jsonapi-object">jsonapi.org</a>
  */
 public class JsonApiObject {
     private final String version;

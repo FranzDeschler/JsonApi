@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * Represents a {@code Relationship Object}.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#document-resource-object-relationships">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#document-resource-object-relationships">jsonapi.org</a>
  */
 public class Relationship {
     private LinksObject links = new LinksObject();
@@ -28,7 +28,7 @@ public class Relationship {
     /**
      * Creates a new relationship with the given link as "related" link.
      *
-     * @param relatedResourceLink a <a href="https://jsonapi.org/format/1.0/#document-resource-object-related-resource-links">related resource link</a>.
+     * @param relatedResourceLink a <a href="https://jsonapi.org/format/1.1/#document-resource-object-related-resource-links">related resource link</a>.
      */
     public Relationship(String relatedResourceLink) {
         setRelatedResourceLink(relatedResourceLink);

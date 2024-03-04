@@ -16,7 +16,7 @@ import java.util.Objects;
 /**
  * Represents a single link inside a {@link LinksObject}.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#document-links">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#document-links">jsonapi.org</a>
  */
 public class Link {
 

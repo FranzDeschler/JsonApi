@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * Represents a JSON:API errors document.
  * <br/>
- * See <a href="https://jsonapi.org/format/1.0/#errors">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#errors">jsonapi.org</a>
  */
 public class ErrorDocument {
     private ErrorObject[] errors;

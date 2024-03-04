@@ -20,7 +20,7 @@ import java.util.*;
  *     <li>{@code data}: one or more {@link ResourceObject resource objects} as the document’s “primary data”</li>
  *     <li>{@code meta}: a {@link MetaInformation meta object} that contains non-standard meta-information.</li>
  * </ul>
- * See <a href="https://jsonapi.org/format/1.0/#document-top-level">jsonapi.org</a>
+ * See <a href="https://jsonapi.org/format/1.1/#document-top-level">jsonapi.org</a>
  */
 @JsonPropertyOrder({"jsonapi", "data", "included", "links", "meta"})
 @JsonDeserialize(using = JsonApiDocumentDeserializer.class)
