@@ -23,15 +23,18 @@ public class LinksObjectDeserializer extends StdDeserializer<LinksObject> {
 
         for (JsonToken token = jsonParser.nextToken(); token != JsonToken.END_OBJECT; token = jsonParser.nextToken()) {
             if (token == JsonToken.FIELD_NAME) {
-                String relation = jsonParser.getText();
+                String linkName = jsonParser.getText();
                 token = jsonParser.nextToken();
                 if (token == JsonToken.VALUE_STRING) {
                     String href = jsonParser.getText();
-                    linksObject.add(new Link(relation, href));
+                    Link link = new Link(href).setRelation(linkName);
+                    linksObject.add(linkName, link);
                 } else {
-                    Link tmp = jsonParser.readValueAs(Link.class);
-                    Link link = new Link(relation, tmp.getHref(), tmp.getMeta());
-                    linksObject.add(link);
+                    Link link = jsonParser.readValueAs(Link.class);
+                    if (link.getRelation() == null)
+                        link.setRelation(linkName);
+
+                    linksObject.add(link.getRelation(), link);
                 }
             }
         }

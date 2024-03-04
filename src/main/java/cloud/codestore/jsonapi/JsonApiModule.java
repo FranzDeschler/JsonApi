@@ -22,6 +22,7 @@ public class JsonApiModule extends SimpleModule {
     public void setupModule(SetupContext context) {
         super.setupModule(context);
         context.addBeanSerializerModifier(new ResourceObjectSerializerModifier());
+        context.addBeanSerializerModifier(new LinkSerializerModifier());
         context.addBeanDeserializerModifier(new ResourceObjectDeserializerModifier());
         context.addBeanDeserializerModifier(new JsonApiDeserializerModifier());
         context.addBeanDeserializerModifier(new RelationshipDeserializerModifier());

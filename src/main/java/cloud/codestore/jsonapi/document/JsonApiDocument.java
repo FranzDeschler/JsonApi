@@ -75,7 +75,7 @@ public abstract class JsonApiDocument {
      *
      * @param extensionMembers one or more members defined by an applied extension.
      * @return a new {@link JsonApiDocument JSON:API document}.
-     * @throws NullPointerException if {@code extensionMembers} is {@code null}.
+     * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
      * @throws IllegalArgumentException if {@code extensionMembers} is empty.
      * @throws IllegalArgumentException if the name of one or more extension members is invalid.
      */
@@ -116,17 +116,28 @@ public abstract class JsonApiDocument {
      * @throws NullPointerException if {@code self} is {@code null}.
      */
     public JsonApiDocument setSelfLink(String self) {
-        return addLink(new Link(Link.SELF, self));
+        return addLink(Link.SELF, new Link(self));
     }
 
     /**
      * Adds a {@link Link link} to this JSON:API document.
-     * Existing links with the same relation will be replaced.
+     * Existing links with the same name will be replaced.
      *
-     * @param link a link.
+     * @param linkName the name of the link.
+     * @param link     a link.
      * @return this object.
-     * @throws NullPointerException if {@code link} is {@code null}.
+     * @throws NullPointerException if {@code linkName} or {@code link} is {@code null}.
      */
+    public JsonApiDocument addLink(String linkName, Link link) {
+        links.add(linkName, link);
+        return this;
+    }
+
+    /**
+     * Adds a {@link Link link} to this JSON:API document.
+     * @deprecated use {@link #addLink(String, Link)} instead.
+     */
+    @Deprecated(since = "1.1")
     public JsonApiDocument addLink(Link link) {
         links.add(link);
         return this;
@@ -162,7 +173,7 @@ public abstract class JsonApiDocument {
     /**
      * @param extensionMembers the extension members to set on this JSON:API document.
      * @return this object.
-     * @throws NullPointerException if {@code extensionMembers} is {@code null}.
+     * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
      * @throws IllegalArgumentException if the name of one or more members is invalid.
      */
     public JsonApiDocument setExtensionMembers(Map<String, Object> extensionMembers) {
@@ -177,10 +188,11 @@ public abstract class JsonApiDocument {
 
     /**
      * Adds an extension member to this JSON:API document.
+     *
      * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
-     * @param value the corresponding value of the member.
+     * @param value      the corresponding value of the member.
      * @return this object.
-     * @throws NullPointerException if {@code memberName} is {@code null}.
+     * @throws NullPointerException     if {@code memberName} is {@code null}.
      * @throws IllegalArgumentException if {@code memberName} is invalid.
      */
     public JsonApiDocument setExtensionMember(String memberName, Object value) {
@@ -196,6 +208,7 @@ public abstract class JsonApiDocument {
 
     /**
      * Returns the value of the given extension member name.
+     *
      * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
      * @return the associated value or {@code null}.
      * @throws NullPointerException if {@code memberName} is {@code null}.
@@ -289,7 +302,8 @@ public abstract class JsonApiDocument {
 
     /**
      * Adds any top level property as extension member if the key is a valid extension member name.
-     * @param key a valid extension member name.
+     *
+     * @param key   a valid extension member name.
      * @param value the corresponding value.
      */
     @JsonAnySetter

@@ -24,13 +24,29 @@ public class LinksObject {
      * Adds a {@link Link} object to this {@link LinksObject}.
      * Links with the same relation will be replaced.
      *
-     * @param link the link to add.
-     * @return this object.
-     * @throws NullPointerException if the link is {@code null}.
+     * @deprecated use {@link #add(String, Link)} instead.
      */
+    @Deprecated(since = "1.1")
     public LinksObject add(Link link) {
         Objects.requireNonNull(link);
         this.links.put(link.getRelation(), link);
+        link.setRelation(null);
+        return this;
+    }
+
+    /**
+     * Adds a {@link Link} object to this {@link LinksObject}.
+     * Links with the same name will be replaced.
+     *
+     * @param name the name of the link. May be different from the link's relation type.
+     * @param link the link to add.
+     * @return this object.
+     * @throws NullPointerException if {@code name} or {@code link} is {@code null}.
+     */
+    public LinksObject add(String name, Link link) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(link);
+        this.links.put(name, link);
         return this;
     }
 
