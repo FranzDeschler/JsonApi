@@ -1,12 +1,12 @@
 package cloud.codestore.jsonapi.document;
 
 import cloud.codestore.jsonapi.Person;
-import cloud.codestore.jsonapi.TestObjectReader;
 import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static cloud.codestore.jsonapi.TestObjectReader.read;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -37,7 +37,7 @@ class GenericResourceTypeTest {
     }
 
     private <T extends ResourceObject> ResourceCollectionDocument<T> readCollection(Class<T> type) {
-        return TestObjectReader.read("""
+        return read("""
                 {
                   "data" : [{
                     "type": "person",

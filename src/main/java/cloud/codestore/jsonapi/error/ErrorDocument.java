@@ -39,7 +39,7 @@ public class ErrorDocument {
      * @param errors an array with one or more {@link ErrorObject}s.
      * @throws IllegalArgumentException if the given array is {@code null} or empty.
      */
-    public ErrorDocument(ErrorObject[] errors) {
+    public ErrorDocument(ErrorObject... errors) {
         if (errors == null || errors.length == 0)
             throw new IllegalArgumentException("An error document must contain at least one error object.");
 

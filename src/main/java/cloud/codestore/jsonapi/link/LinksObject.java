@@ -1,5 +1,6 @@
 package cloud.codestore.jsonapi.link;
 
+import cloud.codestore.jsonapi.ExtensionBase;
 import cloud.codestore.jsonapi.internal.LinksObjectDeserializer;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -12,7 +13,7 @@ import java.util.*;
  * See <a href="https://jsonapi.org/format/1.1/#document-links">jsonapi.org</a>
  */
 @JsonDeserialize(using = LinksObjectDeserializer.class)
-public class LinksObject {
+public class LinksObject extends ExtensionBase<LinksObject> {
     private final Map<String, Link> links = new HashMap<>();
 
     /**
@@ -87,20 +88,27 @@ public class LinksObject {
     }
 
     /**
-     * @return {@code true} if this {@link LinksObject} does not contain any links.
+     * @return {@code true} if this {@link LinksObject} does not contain any links or extension members.
      */
     public boolean isEmpty() {
-        return links.isEmpty();
+        return links.isEmpty() && getExtensionMembers().isEmpty();
     }
 
     /**
      * Used internally for serialization.
      *
      * @return an unmodifiable representation of this {@link LinksObject}.
-     * Each entry of the returned map contains the relation of the link as key and the href of the link as value.
+     * Each entry of the returned map is a link or extension member.
      */
     @JsonValue
-    Map<String, Link> getLinks() {
-        return isEmpty() ? null : Collections.unmodifiableMap(links);
+    Map<String, Object> getValues() {
+        if (isEmpty()) {
+            return null;
+        }
+
+        Map<String, Object> values = new HashMap<>();
+        values.putAll(links);
+        values.putAll(getExtensionMembers());
+        return Collections.unmodifiableMap(values);
     }
 }

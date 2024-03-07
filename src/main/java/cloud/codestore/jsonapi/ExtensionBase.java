@@ -65,7 +65,7 @@ public class ExtensionBase<T extends ExtensionBase> {
      * Used to serialize extension members.
      */
     @JsonAnyGetter
-    private Map<String, Object> getExtensionMembers() {
+    protected Map<String, Object> getExtensionMembers() {
         return Collections.unmodifiableMap(extensionMembers);
     }
 

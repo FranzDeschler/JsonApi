@@ -30,7 +30,7 @@ public class Relationship extends ExtensionBase<Relationship> {
     /**
      * Creates a new relationship with the given link as "related" link.
      *
-     * @param relatedResourceLink a <a href="https://jsonapi.org/format/1.1/#document-resource-object-related-resource-links">related resource link</a>.
+     * @param relatedResourceLink a <a href="https://jsonapi.org/format/1.1/#document-resource-object-related-resource-links">link to the related resource</a>.
      */
     public Relationship(String relatedResourceLink) {
         setRelatedResourceLink(relatedResourceLink);
@@ -58,7 +58,7 @@ public class Relationship extends ExtensionBase<Relationship> {
      */
     public Relationship setSelfLink(String link) {
         links = Objects.requireNonNullElseGet(links, LinksObject::new);
-        links.add(new Link(Link.SELF, link));
+        links.add(Link.SELF, new Link(link));
         return this;
     }
 
@@ -67,7 +67,7 @@ public class Relationship extends ExtensionBase<Relationship> {
      * @return this object.
      */
     public Relationship setRelatedResourceLink(String relatedResourceLink) {
-        links.add(new Link(Link.RELATED, relatedResourceLink));
+        links.add(Link.RELATED, new Link(relatedResourceLink));
         return this;
     }
 

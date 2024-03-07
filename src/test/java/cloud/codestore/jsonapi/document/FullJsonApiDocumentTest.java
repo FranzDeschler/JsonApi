@@ -21,11 +21,11 @@ class FullJsonApiDocumentTest {
         Article article = new Article("1", "JSON:API paints my bikeshed!", author, comments);
 
         JsonApiDocument document = JsonApiDocument.of(new ResourceObject[]{article})
-                                                  .addLink(new Link(Link.SELF, "https://example.com/articles"))
-                                                  .addLink(new Link(Link.NEXT, "https://example.com/articles?page[offset]=2"))
-                                                  .addLink(new Link(Link.LAST, "https://example.com/articles?page[offset]=10"));
+                                                  .addLink(Link.SELF, new Link("https://example.com/articles"))
+                                                  .addLink(Link.NEXT, new Link("https://example.com/articles?page[offset]=2"))
+                                                  .addLink(Link.LAST, new Link("https://example.com/articles?page[offset]=10"));
 
-        assertThat(TestObjectWriter.write(document)).isEqualTo(EXPECTED_JSON);
+        JsonAssertion.assertEquals(EXPECTED_JSON, document);
 
         ResourceCollectionDocument<Article> deserializedDocument = TestObjectReader.read(EXPECTED_JSON, new TypeReference<>() {});
         assertThat(deserializedDocument.getData()).isNotNull();

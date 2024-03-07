@@ -113,10 +113,71 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     /**
      * @param self the link that generated this JSON:API document.
      * @return this object.
-     * @throws NullPointerException if {@code self} is {@code null}.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     * @since 1.0
      */
     public JsonApiDocument setSelfLink(String self) {
         return addLink(Link.SELF, new Link(self));
+    }
+
+    /**
+     * @param related a related resource link when the primary data represents a resource relationship.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     * @since 1.0
+     */
+    public JsonApiDocument setRelatedLink(String related) {
+        return addLink(Link.RELATED, new Link(related));
+    }
+
+    /**
+     * @param describedby a link to a description document.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     * @since 1.1
+     */
+    public JsonApiDocument setDescribedbyLink(String describedby) {
+        return addLink(Link.DESCRIBEDBY, new Link(describedby));
+    }
+
+    /**
+     * @param firstPage a link to the first page of the primary data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     * @since 1.0
+     */
+    public JsonApiDocument setFirstPageLink(String firstPage) {
+        return addLink(Link.FIRST, new Link(firstPage));
+    }
+
+    /**
+     * @param lastPage a link to the last page of the primary data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     * @since 1.0
+     */
+    public JsonApiDocument setLastPageLink(String lastPage) {
+        return addLink(Link.LAST, new Link(lastPage));
+    }
+
+    /**
+     * @param previousPage a link to the previous page of the primary data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     * @since 1.0
+     */
+    public JsonApiDocument setPreviousPageLink(String previousPage) {
+        return addLink(Link.PREV, new Link(previousPage));
+    }
+
+    /**
+     * @param nextPage a link to the next page of the primary data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     * @since 1.0
+     */
+    public JsonApiDocument setNextPageLink(String nextPage) {
+        return addLink(Link.NEXT, new Link(nextPage));
     }
 
     /**
@@ -135,6 +196,7 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
 
     /**
      * Adds a {@link Link link} to this JSON:API document.
+     *
      * @deprecated use {@link #addLink(String, Link)} instead.
      */
     @Deprecated(since = "1.1")
@@ -181,7 +243,7 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
         return new JsonApiObjectMapper().writeValueAsString(this);
     }
 
-    // ===== used internally for serialization =====
+    // ===== used internally for serialization / deserialization =====
 
     /**
      * Only for internal use.<br/>
@@ -211,8 +273,6 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
 
         return false;
     }
-
-    // ===== used internally for serialization / deserialization =====
 
     @JsonSetter("included")
     void setIncludedResources(List<ResourceObject> includedResources) {

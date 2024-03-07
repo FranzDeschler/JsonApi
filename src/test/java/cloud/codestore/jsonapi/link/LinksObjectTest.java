@@ -84,7 +84,7 @@ class LinksObjectTest {
                     }""", LinksObject.class);
 
             assertThat(linksObject).isNotNull();
-            assertThat(linksObject.getLinks()).hasSize(2);
+            assertThat(linksObject.getValues()).hasSize(2);
             assertThat(linksObject.get(Link.SELF)).isNotNull();
             assertThat(linksObject.get("customRelation")).isNotNull();
         }
@@ -101,7 +101,7 @@ class LinksObjectTest {
 
 
             assertThat(linksObject).isNotNull();
-            assertThat(linksObject.getLinks()).hasSize(1);
+            assertThat(linksObject.getValues()).hasSize(1);
             Link link = linksObject.get(Link.SELF);
             assertThat(link).isNotNull();
             assertThat(link.getRelation()).isEqualTo(Link.SELF);
