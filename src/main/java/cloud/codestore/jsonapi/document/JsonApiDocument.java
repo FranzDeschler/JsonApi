@@ -1,5 +1,6 @@
 package cloud.codestore.jsonapi.document;
 
+import cloud.codestore.jsonapi.ExtensionBase;
 import cloud.codestore.jsonapi.JsonApiObjectMapper;
 import cloud.codestore.jsonapi.internal.JsonApiDocumentDeserializer;
 import cloud.codestore.jsonapi.link.Link;
@@ -24,7 +25,7 @@ import java.util.*;
  */
 @JsonPropertyOrder({"jsonapi", "data", "included", "links", "meta"})
 @JsonDeserialize(using = JsonApiDocumentDeserializer.class)
-public abstract class JsonApiDocument {
+public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     /**
      * The JSON:API media type.<br/>
      * See <a href="http://www.iana.org/assignments/media-types/application/vnd.api+json">www.iana.org</a>
@@ -35,7 +36,6 @@ public abstract class JsonApiDocument {
     private List<ResourceObject> includedResources = new LinkedList<>();
     private LinksObject links = new LinksObject();
     private MetaInformation meta;
-    private Map<String, Object> extensionMembers = new HashMap<>();
 
     /**
      * Factory method to create a JSON:API document which contains a single {@link ResourceObject resource object} as its primary data.
@@ -171,55 +171,6 @@ public abstract class JsonApiDocument {
     }
 
     /**
-     * @param extensionMembers the extension members to set on this JSON:API document.
-     * @return this object.
-     * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
-     * @throws IllegalArgumentException if the name of one or more members is invalid.
-     */
-    public JsonApiDocument setExtensionMembers(Map<String, Object> extensionMembers) {
-        Objects.requireNonNull(extensionMembers);
-        this.extensionMembers.clear();
-        for (var entry : extensionMembers.entrySet()) {
-            setExtensionMember(entry.getKey(), entry.getValue());
-        }
-
-        return this;
-    }
-
-    /**
-     * Adds an extension member to this JSON:API document.
-     *
-     * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
-     * @param value      the corresponding value of the member.
-     * @return this object.
-     * @throws NullPointerException     if {@code memberName} is {@code null}.
-     * @throws IllegalArgumentException if {@code memberName} is invalid.
-     */
-    public JsonApiDocument setExtensionMember(String memberName, Object value) {
-        Objects.requireNonNull(memberName);
-        if (!memberName.contains(":")) {
-            throw new IllegalArgumentException("Invalid extension member '" + memberName + "'. " +
-                                               "Extension member names must follow the pattern <namespace>:<name>");
-        }
-
-        extensionMembers.put(memberName, value);
-        return this;
-    }
-
-    /**
-     * Returns the value of the given extension member name.
-     *
-     * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
-     * @return the associated value or {@code null}.
-     * @throws NullPointerException if {@code memberName} is {@code null}.
-     */
-    @JsonIgnore
-    public Object getExtensionMember(String memberName) {
-        Objects.requireNonNull(memberName);
-        return extensionMembers.get(memberName);
-    }
-
-    /**
      * Convenient method to serialize this JSON:API document.
      * Usually used for testing.
      *
@@ -290,26 +241,5 @@ public abstract class JsonApiDocument {
     @JsonIgnore
     public List<Relationship> getRelationshipBacklinks() {
         return relationships;
-    }
-
-    /**
-     * Used to serialize extension members.
-     */
-    @JsonAnyGetter
-    private Map<String, Object> getExtensionMembers() {
-        return extensionMembers;
-    }
-
-    /**
-     * Adds any top level property as extension member if the key is a valid extension member name.
-     *
-     * @param key   a valid extension member name.
-     * @param value the corresponding value.
-     */
-    @JsonAnySetter
-    private void setDeserializedExtensionMember(String key, Object value) {
-        if (!key.startsWith("@") && key.contains(":")) {
-            setExtensionMember(key, value);
-        }
     }
 }

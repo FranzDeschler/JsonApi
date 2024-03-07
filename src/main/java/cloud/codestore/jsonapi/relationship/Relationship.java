@@ -1,5 +1,6 @@
 package cloud.codestore.jsonapi.relationship;
 
+import cloud.codestore.jsonapi.ExtensionBase;
 import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -15,7 +17,7 @@ import java.util.Objects;
  * <br/>
  * See <a href="https://jsonapi.org/format/1.1/#document-resource-object-relationships">jsonapi.org</a>
  */
-public class Relationship {
+public class Relationship extends ExtensionBase<Relationship> {
     private LinksObject links = new LinksObject();
     private MetaInformation meta;
 
@@ -32,6 +34,22 @@ public class Relationship {
      */
     public Relationship(String relatedResourceLink) {
         setRelatedResourceLink(relatedResourceLink);
+    }
+
+    /**
+     * Creates a new {@link Relationship} with the given extension members.
+     *
+     * @param extensionMembers one or more members defined by an applied extension.
+     * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
+     * @throws IllegalArgumentException if {@code extensionMembers} is empty or if the name of one or more extension members is invalid.
+     */
+    public Relationship(Map<String, Object> extensionMembers) {
+        Objects.requireNonNull(extensionMembers);
+        if (extensionMembers.isEmpty()) {
+            throw new IllegalArgumentException("Extension members must not be empty");
+        }
+
+        setExtensionMembers(extensionMembers);
     }
 
     /**

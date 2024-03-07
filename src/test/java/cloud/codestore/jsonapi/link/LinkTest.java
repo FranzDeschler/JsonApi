@@ -17,7 +17,7 @@ class LinkTest {
     @Test
     @DisplayName("must have a href")
     void hrefMandatory() {
-        assertThatThrownBy(() -> new Link(null))
+        assertThatThrownBy(() -> new Link((String) null))
                 .isInstanceOf(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> new Link(""))
