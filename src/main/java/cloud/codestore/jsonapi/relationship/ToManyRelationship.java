@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Represents a to-many relationship.
@@ -99,7 +100,17 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      * @throws IllegalArgumentException if the link is {@code null} or empty.
      */
     public ToManyRelationship<T> setFirstPageLink(String firstPage) {
-        getLinks().add(Link.FIRST, new Link(firstPage));
+        return setFirstPageLink(new Link(firstPage));
+    }
+
+    /**
+     * @param firstPage a link to the first page of the relationship data.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public ToManyRelationship<T> setFirstPageLink(Link firstPage) {
+        Objects.requireNonNull(firstPage);
+        getLinks().add(Link.FIRST, firstPage);
         return this;
     }
 
@@ -109,7 +120,17 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      * @throws IllegalArgumentException if the link is {@code null} or empty.
      */
     public ToManyRelationship<T> setLastPageLink(String lastPage) {
-        getLinks().add(Link.LAST, new Link(lastPage));
+        return setLastPageLink(new Link(lastPage));
+    }
+
+    /**
+     * @param lastPage a {@link Link} to the last page of the relationship data.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public ToManyRelationship<T> setLastPageLink(Link lastPage) {
+        Objects.requireNonNull(lastPage);
+        getLinks().add(Link.LAST, lastPage);
         return this;
     }
 
@@ -119,7 +140,17 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      * @throws IllegalArgumentException if the link is {@code null} or empty.
      */
     public ToManyRelationship<T> setPreviousPageLink(String previousPage) {
-        getLinks().add(Link.PREV, new Link(previousPage));
+        return setPreviousPageLink(new Link(previousPage));
+    }
+
+    /**
+     * @param previousPage a {@link Link} to the previous page of the relationship data.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public ToManyRelationship<T> setPreviousPageLink(Link previousPage) {
+        Objects.requireNonNull(previousPage);
+        getLinks().add(Link.PREV, previousPage);
         return this;
     }
 
@@ -129,7 +160,17 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      * @throws IllegalArgumentException if the link is {@code null} or empty.
      */
     public ToManyRelationship<T> setNextPageLink(String nextPage) {
-        getLinks().add(Link.NEXT, new Link(nextPage));
+        return setNextPageLink(new Link(nextPage));
+    }
+
+    /**
+     * @param nextPage a {@link Link} to the next page of the relationship data.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public ToManyRelationship<T> setNextPageLink(Link nextPage) {
+        Objects.requireNonNull(nextPage);
+        getLinks().add(Link.NEXT, nextPage);
         return this;
     }
 
