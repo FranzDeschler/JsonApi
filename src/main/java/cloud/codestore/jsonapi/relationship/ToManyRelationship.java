@@ -1,5 +1,6 @@
 package cloud.codestore.jsonapi.relationship;
 
+import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.resource.ResourceIdentifierObject;
 import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -52,7 +53,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
 
             setData(resourceIdentifiers);
         } else {
-            setData(null);
+            this.data = null;
         }
 
         return this;
@@ -83,12 +84,52 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      *                               resource identifiers is {@code null} or doesn´t have the same length.
      */
     @JsonSetter("data")
-    public ToManyRelationship<T> setData(ResourceIdentifierObject[] data) {
+    public ToManyRelationship<T> setData(ResourceIdentifierObject... data) {
         if (relatedResource != null && !relatedResourceCountMatchesResourceIdentifierCount(data)) {
             throw new IllegalStateException("Relationships that contain related resources must contain a resource identifier objects to provide resource linkage.");
         }
 
         this.data = data;
+        return this;
+    }
+
+    /**
+     * @param firstPage a link to the first page of the relationship data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     */
+    public ToManyRelationship<T> setFirstPageLink(String firstPage) {
+        getLinks().add(Link.FIRST, new Link(firstPage));
+        return this;
+    }
+
+    /**
+     * @param lastPage a link to the last page of the relationship data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     */
+    public ToManyRelationship<T> setLastPageLink(String lastPage) {
+        getLinks().add(Link.LAST, new Link(lastPage));
+        return this;
+    }
+
+    /**
+     * @param previousPage a link to the previous page of the relationship data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     */
+    public ToManyRelationship<T> setPreviousPageLink(String previousPage) {
+        getLinks().add(Link.PREV, new Link(previousPage));
+        return this;
+    }
+
+    /**
+     * @param nextPage a link to the next page of the relationship data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     */
+    public ToManyRelationship<T> setNextPageLink(String nextPage) {
+        getLinks().add(Link.NEXT, new Link(nextPage));
         return this;
     }
 
@@ -99,7 +140,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
 
     private boolean relatedResourceCountMatchesResourceIdentifierCount(ResourceIdentifierObject[] resourceIdentifiers) {
         return relatedResource != null &&
-                resourceIdentifiers != null &&
-                relatedResource.length == resourceIdentifiers.length;
+               resourceIdentifiers != null &&
+               relatedResource.length == resourceIdentifiers.length;
     }
 }

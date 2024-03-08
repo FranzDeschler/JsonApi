@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("A meta object is deserialized")
+@DisplayName("A meta object can be deserialized")
 class MetaInformationDeserializerTest {
 
     private MetaDeserializer metaDeserializer;
@@ -64,7 +64,7 @@ class MetaInformationDeserializerTest {
     }
 
     @Nested
-    @DisplayName("providing the pointer of the meta object")
+    @DisplayName("providing a pointer to the meta object")
     class MetaPathTest {
         private String pointer;
 
@@ -77,7 +77,7 @@ class MetaInformationDeserializerTest {
         }
 
         @Test
-        @DisplayName("of the document")
+        @DisplayName("of the top level document")
         void documentMetaInfo() {
             TestObjectReader.read("""
                 {

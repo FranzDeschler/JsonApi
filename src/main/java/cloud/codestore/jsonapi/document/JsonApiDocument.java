@@ -114,7 +114,6 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      * @param self the link that generated this JSON:API document.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
-     * @since 1.0
      */
     public JsonApiDocument setSelfLink(String self) {
         return addLink(Link.SELF, new Link(self));
@@ -124,7 +123,6 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      * @param related a related resource link when the primary data represents a resource relationship.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
-     * @since 1.0
      */
     public JsonApiDocument setRelatedLink(String related) {
         return addLink(Link.RELATED, new Link(related));
@@ -144,7 +142,6 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      * @param firstPage a link to the first page of the primary data.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
-     * @since 1.0
      */
     public JsonApiDocument setFirstPageLink(String firstPage) {
         return addLink(Link.FIRST, new Link(firstPage));
@@ -154,7 +151,6 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      * @param lastPage a link to the last page of the primary data.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
-     * @since 1.0
      */
     public JsonApiDocument setLastPageLink(String lastPage) {
         return addLink(Link.LAST, new Link(lastPage));
@@ -164,7 +160,6 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      * @param previousPage a link to the previous page of the primary data.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
-     * @since 1.0
      */
     public JsonApiDocument setPreviousPageLink(String previousPage) {
         return addLink(Link.PREV, new Link(previousPage));
@@ -174,7 +169,6 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      * @param nextPage a link to the next page of the primary data.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
-     * @since 1.0
      */
     public JsonApiDocument setNextPageLink(String nextPage) {
         return addLink(Link.NEXT, new Link(nextPage));

@@ -125,7 +125,34 @@ public class ErrorObject {
      * @return this object.
      */
     public ErrorObject setAboutLink(String link) {
-        links.add(new Link(Link.ABOUT, link));
+        links.add(Link.ABOUT, new Link(link));
+        return this;
+    }
+
+    /**
+     * @param link a {@link Link} that leads to further details about this particular occurrence of the problem.
+     * @return this object.
+     */
+    public ErrorObject setAboutLink(Link link) {
+        links.add(Link.ABOUT, link);
+        return this;
+    }
+
+    /**
+     * @param link a link that identifies the type of error that this particular error is an instance of.
+     * @return this object.
+     */
+    public ErrorObject setTypeLink(String link) {
+        links.add(Link.TYPE, new Link(link));
+        return this;
+    }
+
+    /**
+     * @param link a {@link Link} that identifies the type of error that this particular error is an instance of.
+     * @return this object.
+     */
+    public ErrorObject setTypeLink(Link link) {
+        links.add(Link.TYPE, link);
         return this;
     }
 

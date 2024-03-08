@@ -95,4 +95,54 @@ class RelationshipSerializationTest {
                     }""", relationship);
         }
     }
+
+    @Test
+    @DisplayName("that represents a to-many relationship may contain pagination links")
+    void optionalPaginationLinks() {
+        var relationship = new ToManyRelationship<>().setFirstPageLink("/comments?page[number]=1")
+                                                     .setPreviousPageLink("/comments?page[number]=5")
+                                                     .setNextPageLink("/comments?page[number]=7")
+                                                     .setLastPageLink("/comments?page[number]=12");
+
+        assertEquals("""
+                {
+                  "links": {
+                    "first": "/comments?page[number]=1",
+                    "prev": "/comments?page[number]=5",
+                    "next": "/comments?page[number]=7",
+                    "last": "/comments?page[number]=12"
+                  }
+                }""", relationship);
+    }
+
+    @Test
+    @DisplayName("may be to-one")
+    void toOneRelationship() {
+        var relationship = new ToOneRelationship<>().setData(new ResourceIdentifierObject("article", "1"));
+        assertEquals("""
+                {
+                  "data": {"type": "article", "id": "1"}
+                }""", relationship);
+    }
+
+    @Test
+    @DisplayName("may be to-many")
+    void toManyRelationship() {
+        var relationship = new ToManyRelationship<>().setData(
+                new ResourceIdentifierObject("comment", "1"),
+                new ResourceIdentifierObject("comment", "2"),
+                new ResourceIdentifierObject("comment", "3"),
+                new ResourceIdentifierObject("comment", "4")
+        );
+
+        assertEquals("""
+                {
+                  "data": [
+                    {"type": "comment", "id": "1"},
+                    {"type": "comment", "id": "2"},
+                    {"type": "comment", "id": "3"},
+                    {"type": "comment", "id": "4"}
+                  ]
+                }""", relationship);
+    }
 }
