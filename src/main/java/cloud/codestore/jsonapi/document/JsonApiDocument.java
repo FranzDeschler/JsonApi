@@ -272,11 +272,19 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     }
 
     /**
+     * @param linkName the name of a link.
+     * @return the corresponding link or {@code null} if the link does not exist.
+     */
+    public Link getLink(String linkName) {
+        return links.get(linkName);
+    }
+
+    /**
      * Adds a {@link Link link} to this JSON:API document.
      *
      * @deprecated use {@link #addLink(String, Link)} instead.
      */
-    @Deprecated(since = "1.1")
+    @Deprecated(since = "1.1", forRemoval = true)
     public JsonApiDocument addLink(Link link) {
         links.add(link);
         return this;

@@ -119,7 +119,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      * @throws NullPointerException if the link is {@code null}.
      */
     public ToManyRelationship<T> setFirstPageLink(Link firstPage) {
-        getLinks().add(Link.FIRST, firstPage);
+        addLink(Link.FIRST, firstPage);
         return this;
     }
 
@@ -128,7 +128,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      */
     @JsonIgnore
     public Link getFirstPageLink() {
-        return getLinks().get(Link.FIRST);
+        return getLink(Link.FIRST);
     }
 
     /**
@@ -146,7 +146,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      * @throws NullPointerException if the link is {@code null}.
      */
     public ToManyRelationship<T> setLastPageLink(Link lastPage) {
-        getLinks().add(Link.LAST, lastPage);
+        addLink(Link.LAST, lastPage);
         return this;
     }
 
@@ -155,7 +155,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      */
     @JsonIgnore
     public Link getLastPageLink() {
-        return getLinks().get(Link.LAST);
+        return getLink(Link.LAST);
     }
 
     /**
@@ -173,7 +173,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      * @throws NullPointerException if the link is {@code null}.
      */
     public ToManyRelationship<T> setPreviousPageLink(Link previousPage) {
-        getLinks().add(Link.PREV, previousPage);
+        addLink(Link.PREV, previousPage);
         return this;
     }
 
@@ -182,7 +182,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      */
     @JsonIgnore
     public Link getPreviousPageLink() {
-        return getLinks().get(Link.PREV);
+        return getLink(Link.PREV);
     }
 
     /**
@@ -200,7 +200,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      * @throws NullPointerException if the link is {@code null}.
      */
     public ToManyRelationship<T> setNextPageLink(Link nextPage) {
-        getLinks().add(Link.NEXT, nextPage);
+        addLink(Link.NEXT, nextPage);
         return this;
     }
 
@@ -209,7 +209,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
      */
     @JsonIgnore
     public Link getNextPageLink() {
-        return getLinks().get(Link.NEXT);
+        return getLink(Link.NEXT);
     }
 
     @Override

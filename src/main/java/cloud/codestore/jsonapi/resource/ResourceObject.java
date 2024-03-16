@@ -103,6 +103,28 @@ public abstract class ResourceObject {
     }
 
     /**
+     * Adds a {@link Link link} to this resource object.
+     * Existing links with the same name will be replaced.
+     *
+     * @param linkName the name of the link.
+     * @param link     a link.
+     * @return this object.
+     * @throws NullPointerException if {@code linkName} or {@code link} is {@code null}.
+     */
+    public ResourceObject addLink(String linkName, Link link) {
+        links.add(linkName, link);
+        return this;
+    }
+
+    /**
+     * @param linkName the name of a link.
+     * @return the corresponding link of this resource object or {@code null} if the link does not exist.
+     */
+    public Link getLink(String linkName) {
+        return links.get(linkName);
+    }
+
+    /**
      * @return a {@link LinksObject} containing the links of this resource object.
      */
     @JsonGetter("links")

@@ -177,6 +177,28 @@ public class ErrorObject {
     }
 
     /**
+     * Adds a {@link Link link} to this error object.
+     * Existing links with the same name will be replaced.
+     *
+     * @param linkName the name of the link.
+     * @param link     a link.
+     * @return this object.
+     * @throws NullPointerException if {@code linkName} or {@code link} is {@code null}.
+     */
+    public ErrorObject addLink(String linkName, Link link) {
+        links.add(linkName, link);
+        return this;
+    }
+
+    /**
+     * @param linkName the name of a link.
+     * @return the corresponding link of this error object or {@code null} if the link does not exist.
+     */
+    public Link getLink(String linkName) {
+        return links.get(linkName);
+    }
+
+    /**
      * @return a {@link ErrorSource} object containing references to the source of the error.
      */
     @JsonGetter("source")
