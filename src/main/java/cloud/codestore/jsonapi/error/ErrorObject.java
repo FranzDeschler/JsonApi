@@ -3,10 +3,7 @@ package cloud.codestore.jsonapi.error;
 import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.link.LinksObject;
 import cloud.codestore.jsonapi.meta.MetaInformation;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 
 /**
  * Represents a JSON:API error object.
@@ -84,7 +81,7 @@ public class ErrorObject {
 
     /**
      * @param title a short, human-readable summary of the problem that SHOULD NOT change from occurrence to occurrence
-     *             of the problem, except for purposes of localization.
+     *              of the problem, except for purposes of localization.
      * @return this object.
      */
     public ErrorObject setTitle(String title) {
@@ -123,15 +120,16 @@ public class ErrorObject {
     /**
      * @param link a link that leads to further details about this particular occurrence of the problem.
      * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or blank.
      */
     public ErrorObject setAboutLink(String link) {
-        links.add(Link.ABOUT, new Link(link));
-        return this;
+        return setAboutLink(new Link(link));
     }
 
     /**
      * @param link a {@link Link} that leads to further details about this particular occurrence of the problem.
      * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
      */
     public ErrorObject setAboutLink(Link link) {
         links.add(Link.ABOUT, link);
@@ -139,21 +137,40 @@ public class ErrorObject {
     }
 
     /**
+     * @return a link that leads to further details about this particular occurrence of the problem.
+     * May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getAboutLink() {
+        return links.get(Link.ABOUT);
+    }
+
+    /**
      * @param link a link that identifies the type of error that this particular error is an instance of.
      * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or blank.
      */
     public ErrorObject setTypeLink(String link) {
-        links.add(Link.TYPE, new Link(link));
-        return this;
+        return setTypeLink(new Link(link));
     }
 
     /**
      * @param link a {@link Link} that identifies the type of error that this particular error is an instance of.
      * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
      */
     public ErrorObject setTypeLink(Link link) {
         links.add(Link.TYPE, link);
         return this;
+    }
+
+    /**
+     * @return a link that identifies the type of error that this particular error is an instance of.
+     * May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getTypeLink() {
+        return links.get(Link.TYPE);
     }
 
     /**

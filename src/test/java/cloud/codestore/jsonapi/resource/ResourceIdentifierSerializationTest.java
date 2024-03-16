@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("A resource identifier object")
 class ResourceIdentifierSerializationTest {
     private static final String TYPE = "testType";
-    private static final String ID = "testId";
+    private static final String ID = "123";
 
     @Test
     @DisplayName("must contain a type and id member")
@@ -31,16 +31,39 @@ class ResourceIdentifierSerializationTest {
                 .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> new ResourceIdentifierObject(" ", ID))
                 .isInstanceOf(IllegalArgumentException.class);
+
+        assertEquals("""
+                {
+                  "type": "testType",
+                  "id": "123"
+                }""", new ResourceIdentifierObject(TYPE, ID));
+    }
+
+    @Test
+    @DisplayName("may not contain an id if a lid member is present")
+    void localId() {
+        assertThatThrownBy(() -> new ResourceIdentifierObject(TYPE, null, null))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new ResourceIdentifierObject(TYPE, "", ""))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new ResourceIdentifierObject(TYPE, " ", " "))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertEquals("""
+                {
+                  "type": "testType",
+                  "lid": "123"
+                }""", new ResourceIdentifierObject(TYPE, null, ID));
     }
 
     @Test
     @DisplayName("may contain a meta member")
     void metaInfo() {
-        var resourceIdentifier = new ResourceIdentifierObject("article", "1").setMeta(new DummyMetaInformation());
+        var resourceIdentifier = new ResourceIdentifierObject(TYPE, ID).setMeta(new DummyMetaInformation());
         assertEquals("""
                 {
-                  "type": "article",
-                  "id": "1",
+                  "type": "testType",
+                  "id": "123",
                   "meta": {
                     "info": "dummy meta info"
                   }

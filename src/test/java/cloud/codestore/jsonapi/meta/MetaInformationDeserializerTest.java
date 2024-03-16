@@ -4,24 +4,36 @@ import cloud.codestore.jsonapi.DummyMetaInformation;
 import cloud.codestore.jsonapi.TestObjectReader;
 import cloud.codestore.jsonapi.document.JsonApiDocument;
 import cloud.codestore.jsonapi.document.JsonApiObject;
+import cloud.codestore.jsonapi.relationship.ToManyRelationship;
+import cloud.codestore.jsonapi.relationship.ToOneRelationship;
+import cloud.codestore.jsonapi.resource.ResourceObject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("A meta object can be deserialized")
 class MetaInformationDeserializerTest {
 
+    private TestObjectReader reader = new TestObjectReader(Map.of(
+            "article", Article.class,
+            "person", Person.class,
+            "comment", Comment.class
+    ));
     private MetaDeserializer metaDeserializer;
 
     @Test
     @DisplayName("based on the concrete type")
     void deserializeBasedOnType() {
         metaDeserializer = pointer -> DummyMetaInformation.class;
-        JsonApiObject jsonApiObject = TestObjectReader.read("""
+        JsonApiObject jsonApiObject = reader.read("""
                 {
                   "meta" : {
                     "info" : "This is a custom meta info."
@@ -52,7 +64,7 @@ class MetaInformationDeserializerTest {
             }
         };
 
-        JsonApiObject jsonApiObject = TestObjectReader.read("""
+        JsonApiObject jsonApiObject = reader.read("""
                 {
                   "meta" : {
                     "info" : "This meta object is deserialized dynamically."
@@ -79,12 +91,12 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of the top level document")
         void documentMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "meta" : {
-                    "info" : "/meta"
-                  }
-                }""", JsonApiDocument.class, metaDeserializer);
+            reader.read("""
+                    {
+                      "meta" : {
+                        "info" : "/meta"
+                      }
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/meta");
         }
@@ -92,14 +104,14 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of the jsonapi object")
         void jsonapiObjectMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "jsonapi": {
-                    "meta" : {
-                      "info" : "/jsonapi/meta"
-                    }
-                  }
-                }""", JsonApiDocument.class, metaDeserializer);
+            reader.read("""
+                    {
+                      "jsonapi": {
+                        "meta" : {
+                          "info" : "/jsonapi/meta"
+                        }
+                      }
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/jsonapi/meta");
         }
@@ -107,17 +119,17 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of a document link")
         void documentLinkMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "links": {
-                    "self": {
-                      "href": "http://localhost:8080",
-                      "meta" : {
-                        "info" : "/links/self/meta"
+            reader.read("""
+                    {
+                      "links": {
+                        "self": {
+                          "href": "http://localhost:8080",
+                          "meta" : {
+                            "info" : "/links/self/meta"
+                          }
+                        }
                       }
-                    }
-                  }
-                }""", JsonApiDocument.class, metaDeserializer);
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/links/self/meta");
         }
@@ -125,16 +137,16 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of a resource object")
         void resourceMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "data": {
-                    "type": "person",
-                    "id": "1",
-                    "meta" : {
-                      "info" : "/data/meta"
-                    }
-                  }
-                }""", JsonApiDocument.class, metaDeserializer);
+            reader.read("""
+                    {
+                      "data": {
+                        "type": "person",
+                        "id": "1",
+                        "meta" : {
+                          "info" : "/data/meta"
+                        }
+                      }
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/data/meta");
         }
@@ -142,16 +154,16 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of a collection resource object")
         void collectionResourceMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "data": [{
-                    "type": "person",
-                    "id": "1",
-                    "meta" : {
-                      "info" : "/data/0/meta"
-                    }
-                  }]
-                }""", JsonApiDocument.class, metaDeserializer);
+            reader.read("""
+                    {
+                      "data": [{
+                        "type": "person",
+                        "id": "1",
+                        "meta" : {
+                          "info" : "/data/0/meta"
+                        }
+                      }]
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/data/0/meta");
         }
@@ -159,16 +171,16 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of an included resource object")
         void includedResourceMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "included": [{
-                    "type": "person",
-                    "id": "1",
-                    "meta" : {
-                      "info" : "/included/0/meta"
-                    }
-                  }]
-                }""", JsonApiDocument.class, metaDeserializer);
+            reader.read("""
+                    {
+                      "included": [{
+                        "type": "person",
+                        "id": "1",
+                        "meta" : {
+                          "info" : "/included/0/meta"
+                        }
+                      }]
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/included/0/meta");
         }
@@ -176,21 +188,21 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of a resource link")
         void resourceLinkMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "data": {
-                    "type": "person",
-                    "id": "1",
-                    "links": {
-                      "self": {
-                        "href": "http://localhost:8080",
-                        "meta" : {
-                          "info" : "/data/links/self/meta"
+            reader.read("""
+                    {
+                      "data": {
+                        "type": "person",
+                        "id": "1",
+                        "links": {
+                          "self": {
+                            "href": "http://localhost:8080",
+                            "meta" : {
+                              "info" : "/data/links/self/meta"
+                            }
+                          }
                         }
                       }
-                    }
-                  }
-                }""", JsonApiDocument.class, metaDeserializer);
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/data/links/self/meta");
         }
@@ -198,21 +210,21 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of an included resource link")
         void includedResourceLinkMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "included": [{
-                    "type": "person",
-                    "id": "1",
-                    "links": {
-                      "self": {
-                        "href": "http://localhost:8080",
-                        "meta" : {
-                          "info" : "/included/0/links/self/meta"
+            reader.read("""
+                    {
+                      "included": [{
+                        "type": "person",
+                        "id": "1",
+                        "links": {
+                          "self": {
+                            "href": "http://localhost:8080",
+                            "meta" : {
+                              "info" : "/included/0/links/self/meta"
+                            }
+                          }
                         }
-                      }
-                    }
-                  }]
-                }""", JsonApiDocument.class, metaDeserializer);
+                      }]
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/included/0/links/self/meta");
         }
@@ -220,20 +232,20 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of a relationship")
         void relationshipMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "data": {
-                    "type": "article",
-                    "id": "1",
-                    "relationships": {
-                      "author": {
-                        "meta" : {
-                          "info" : "/data/relationships/author/meta"
+            reader.read("""
+                    {
+                      "data": {
+                        "type": "article",
+                        "id": "1",
+                        "relationships": {
+                          "author": {
+                            "meta" : {
+                              "info" : "/data/relationships/author/meta"
+                            }
+                          }
                         }
                       }
-                    }
-                  }
-                }""", JsonApiDocument.class, metaDeserializer);
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/data/relationships/author/meta");
         }
@@ -241,20 +253,20 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of an included resource relationship")
         void includedRelationshipMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "included": [{
-                    "type": "article",
-                    "id": "1",
-                    "relationships": {
-                      "author": {
-                        "meta" : {
-                          "info" : "/included/0/relationships/author/meta"
+            reader.read("""
+                    {
+                      "included": [{
+                        "type": "article",
+                        "id": "1",
+                        "relationships": {
+                          "author": {
+                            "meta" : {
+                              "info" : "/included/0/relationships/author/meta"
+                            }
+                          }
                         }
-                      }
-                    }
-                  }]
-                }""", JsonApiDocument.class, metaDeserializer);
+                      }]
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/included/0/relationships/author/meta");
         }
@@ -262,25 +274,25 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of a relationship link")
         void relationshipLinkMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "data": {
-                    "type": "article",
-                    "id": "1",
-                    "relationships": {
-                      "author": {
-                        "links": {
-                          "related": {
-                            "href": "http://localhost:8080",
-                            "meta" : {
-                              "info" : "/data/relationships/author/links/related/meta"
+            reader.read("""
+                    {
+                      "data": {
+                        "type": "article",
+                        "id": "1",
+                        "relationships": {
+                          "author": {
+                            "links": {
+                              "related": {
+                                "href": "http://localhost:8080",
+                                "meta" : {
+                                  "info" : "/data/relationships/author/links/related/meta"
+                                }
+                              }
                             }
                           }
                         }
                       }
-                    }
-                  }
-                }""", JsonApiDocument.class, metaDeserializer);
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/data/relationships/author/links/related/meta");
         }
@@ -288,25 +300,25 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of an included relationship link")
         void includedRelationshipLinkMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "included": [{
-                    "type": "article",
-                    "id": "1",
-                    "relationships": {
-                      "author": {
-                        "links": {
-                          "related": {
-                            "href": "http://localhost:8080",
-                            "meta" : {
-                              "info" : "/included/0/relationships/author/links/related/meta"
+            reader.read("""
+                    {
+                      "included": [{
+                        "type": "article",
+                        "id": "1",
+                        "relationships": {
+                          "author": {
+                            "links": {
+                              "related": {
+                                "href": "http://localhost:8080",
+                                "meta" : {
+                                  "info" : "/included/0/relationships/author/links/related/meta"
+                                }
+                              }
                             }
                           }
                         }
-                      }
-                    }
-                  }]
-                }""", JsonApiDocument.class, metaDeserializer);
+                      }]
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/included/0/relationships/author/links/related/meta");
         }
@@ -314,24 +326,24 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of a resource identifier object")
         void resourceIdentifierMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "data": {
-                    "type": "article",
-                    "id": "1",
-                    "relationships": {
-                      "author": {
-                        "data": {
-                          "type": "person",
-                          "id": "2",
-                          "meta" : {
-                            "info" : "/data/relationships/author/data/meta"
+            reader.read("""
+                    {
+                      "data": {
+                        "type": "article",
+                        "id": "1",
+                        "relationships": {
+                          "author": {
+                            "data": {
+                              "type": "person",
+                              "id": "2",
+                              "meta" : {
+                                "info" : "/data/relationships/author/data/meta"
+                              }
+                            }
                           }
                         }
                       }
-                    }
-                  }
-                }""", JsonApiDocument.class, metaDeserializer);
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/data/relationships/author/data/meta");
         }
@@ -339,24 +351,24 @@ class MetaInformationDeserializerTest {
         @Test
         @DisplayName("of a resource identifier object inside a collection")
         void resourceIdentifierListMetaInfo() {
-            TestObjectReader.read("""
-                {
-                  "data": {
-                    "type": "article",
-                    "id": "1",
-                    "relationships": {
-                      "comments": {
-                        "data": [{
-                          "type": "comment",
-                          "id": "2",
-                          "meta" : {
-                            "info" : "/data/relationships/comments/data/0/meta"
+            reader.read("""
+                    {
+                      "data": {
+                        "type": "article",
+                        "id": "1",
+                        "relationships": {
+                          "comments": {
+                            "data": [{
+                              "type": "comment",
+                              "id": "2",
+                              "meta" : {
+                                "info" : "/data/relationships/comments/data/0/meta"
+                              }
+                            }]
                           }
-                        }]
+                        }
                       }
-                    }
-                  }
-                }""", JsonApiDocument.class, metaDeserializer);
+                    }""", JsonApiDocument.class, metaDeserializer);
 
             assertThat(pointer).isEqualTo("/data/relationships/comments/data/0/meta");
         }
@@ -366,5 +378,34 @@ class MetaInformationDeserializerTest {
         assertThat(meta).isNotNull();
         assertThat(meta).isInstanceOf(DummyMetaInformation.class);
         assertThat(((DummyMetaInformation) meta).info).isEqualTo(content);
+    }
+
+    private static class Article extends ResourceObject {
+        ToOneRelationship<Person> author;
+        ToManyRelationship<Comment> comments;
+
+        @JsonCreator
+        Article(
+                @JsonProperty("author") ToOneRelationship<Person> author,
+                @JsonProperty("comments") ToManyRelationship<Comment> comments
+        ) {
+            super("article");
+            this.author = author;
+            this.comments = comments;
+        }
+    }
+
+    private static class Person extends ResourceObject {
+        @JsonCreator
+        Person() {
+            super("person");
+        }
+    }
+
+    private static class Comment extends ResourceObject {
+        @JsonCreator
+        Comment() {
+            super("comment");
+        }
     }
 }

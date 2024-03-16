@@ -25,20 +25,40 @@ public class LinksObjectDeserializer extends StdDeserializer<LinksObject> {
             if (token == JsonToken.FIELD_NAME) {
                 String linkName = jsonParser.getText();
                 token = jsonParser.nextToken();
-                if (token == JsonToken.VALUE_STRING) {
-                    String href = jsonParser.getText();
-                    Link link = new Link(href).setRelation(linkName);
-                    linksObject.add(linkName, link);
-                } else {
-                    Link link = jsonParser.readValueAs(Link.class);
-                    if (link.getRelation() == null)
-                        link.setRelation(linkName);
 
-                    linksObject.add(link.getRelation(), link);
+                if (isExtensionMember(linkName)) {
+                    Object object = jsonParser.readValueAs(Object.class);
+                    linksObject.setExtensionMember(linkName, object);
+                } else if (token == JsonToken.VALUE_STRING) {
+                    parseAsString(linkName, jsonParser, linksObject);
+                } else {
+                    parseAsLinkObject(linkName, jsonParser, linksObject);
                 }
             }
         }
 
         return linksObject;
+    }
+
+    private void parseAsString(String linkName, JsonParser jsonParser, LinksObject linksObject) throws IOException {
+        String href = jsonParser.getText();
+        if (href != null && !href.isBlank()) {
+            Link link = new Link(href).setRelation(linkName);
+            linksObject.add(linkName, link);
+        }
+    }
+
+    private void parseAsLinkObject(String linkName, JsonParser jsonParser, LinksObject linksObject) throws IOException {
+        Link link = jsonParser.readValueAs(Link.class);
+        if (link != null && link.getHref() != null && !link.getHref().isBlank()) {
+            if (link.getRelation() == null)
+                link.setRelation(linkName);
+
+            linksObject.add(linkName, link);
+        }
+    }
+
+    private boolean isExtensionMember(String linkName) {
+        return linkName.contains(":");
     }
 }

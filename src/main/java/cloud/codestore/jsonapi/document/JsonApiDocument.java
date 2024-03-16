@@ -130,6 +130,14 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     }
 
     /**
+     * @return the link that generated this JSON:API document. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getSelfLink() {
+        return links.get(Link.SELF);
+    }
+
+    /**
      * @param related a related resource link when the primary data represents a resource relationship.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
@@ -146,6 +154,14 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     public JsonApiDocument setRelatedLink(Link related) {
         Objects.requireNonNull(related);
         return addLink(Link.RELATED, related);
+    }
+
+    /**
+     * @return a related resource link when the primary data represents a resource relationship. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getRelatedLink() {
+        return links.get(Link.RELATED);
     }
 
     /**
@@ -170,6 +186,14 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     }
 
     /**
+     * @return a link to a description document. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getDescribedbyLink() {
+        return links.get(Link.DESCRIBEDBY);
+    }
+
+    /**
      * @param firstPage a link to the first page of the primary data.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
@@ -187,6 +211,14 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
         Objects.requireNonNull(firstPage);
         getLinks().add(Link.FIRST, firstPage);
         return this;
+    }
+
+    /**
+     * @return a link to the first page of the primary data. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getFirstPageLink() {
+        return links.get(Link.FIRST);
     }
 
     /**
@@ -210,6 +242,14 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     }
 
     /**
+     * @return a link to the last page of the primary data. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getLastPageLink() {
+        return links.get(Link.LAST);
+    }
+
+    /**
      * @param previousPage a link to the previous page of the primary data.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
@@ -230,6 +270,14 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     }
 
     /**
+     * @return a link to the previous page of the primary data. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getPreviousPageLink() {
+        return links.get(Link.PREV);
+    }
+
+    /**
      * @param nextPage a link to the next page of the primary data.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or empty.
@@ -247,6 +295,14 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
         Objects.requireNonNull(nextPage);
         getLinks().add(Link.NEXT, nextPage);
         return this;
+    }
+
+    /**
+     * @return a link to the next page of the primary data. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getNextPageLink() {
+        return links.get(Link.NEXT);
     }
 
     /**
@@ -327,29 +383,31 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
 
         for (ResourceObject resourceObject : resourceObjects) {
             Objects.requireNonNull(resourceObject);
-            if (!alreadyIncluded(resourceObject)) {
+            if (notAlreadyIncluded(resourceObject)) {
                 includedResources.add(resourceObject);
             }
         }
     }
 
-    private boolean alreadyIncluded(ResourceObject resourceToInclude) {
-        for (ResourceObject includedResource : includedResources) {
-            if (Objects.equals(includedResource.getIdentifier(), resourceToInclude.getIdentifier())) {
-                return true;
-            }
-        }
-
-        return false;
+    private boolean notAlreadyIncluded(ResourceObject resourceToInclude) {
+        return includedResources.stream().noneMatch(includedResource ->
+                Objects.equals(includedResource.getIdentifier(), resourceToInclude.getIdentifier()));
     }
 
+    /**
+     * Sets the included resource objects and filters duplicates based on type and id.
+     */
     @JsonSetter("included")
-    void setIncludedResources(List<ResourceObject> includedResources) {
-        this.includedResources = includedResources;
+    private void setIncludedResources(List<ResourceObject> includedResources) {
+        for (ResourceObject resourceObject : includedResources) {
+            if (notAlreadyIncluded(resourceObject)) {
+                this.includedResources.add(resourceObject);
+            }
+        }
     }
 
     @JsonSetter("links")
-    void setLinksObject(LinksObject links) {
+    private void setLinksObject(LinksObject links) {
         this.links = links;
     }
 

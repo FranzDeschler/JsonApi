@@ -43,7 +43,7 @@ class JsonApiObjectSerializationTest {
         @Test
         @DisplayName("an array of URIs for all applied profiles")
         void appliedProfiles() {
-            jsonApiObject.setExtensions(
+            jsonApiObject.setProfiles(
                     "https://example.com/profiles/flexible-pagination",
                     "https://example.com/profiles/resource-versioning"
             );
@@ -51,7 +51,7 @@ class JsonApiObjectSerializationTest {
             assertEquals("""
                     {
                       "version": "1.1",
-                      "ext" : [
+                      "profile" : [
                         "https://example.com/profiles/flexible-pagination",
                         "https://example.com/profiles/resource-versioning"
                       ]

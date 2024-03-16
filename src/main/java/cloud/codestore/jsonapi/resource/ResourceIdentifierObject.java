@@ -16,27 +16,47 @@ import java.util.Objects;
 public class ResourceIdentifierObject {
     private String type;
     private String id;
+    private String lid;
     private MetaInformation meta;
 
     /**
-     * Creates a new {@link ResourceIdentifierObject}.
-     *
      * @param type the type of the resource.
      * @param id   the id of the resource.
      * @throws IllegalArgumentException if the type or id is {@code null} or blank.
      */
-    @JsonCreator
-    public ResourceIdentifierObject(
-            @JsonProperty("type") String type,
-            @JsonProperty("id") String id
-    ) {
+    public ResourceIdentifierObject(String type, String id) {
         if (type == null || type.isBlank())
-            throw new IllegalArgumentException("Parameter 'type' must not be null or blank.");
+            throw new IllegalArgumentException("'type' must not be null or blank.");
         if (id == null || id.isBlank())
-            throw new IllegalArgumentException("Parameter 'id' must not be null or blank.");
+            throw new IllegalArgumentException("'id' must not be null or blank.");
 
         this.type = type;
         this.id = id;
+    }
+
+    /**
+     * @param type the type of the resource.
+     * @param id   the id of the resource.
+     * @param lid  the local id of the resource if it represents a new resource to be created on the server.
+     * @throws IllegalArgumentException if {@code type} or both, {@code id} and {@code lid} are {@code null} or blank.
+     */
+    @JsonCreator
+    public ResourceIdentifierObject(
+            @JsonProperty("type") String type,
+            @JsonProperty("id") String id,
+            @JsonProperty("lid") String lid
+    ) {
+        if (type == null || type.isBlank())
+            throw new IllegalArgumentException("'type' must not be null or blank.");
+
+        this.type = type;
+        if (id != null && !id.isBlank())
+            this.id = id;
+        if (lid != null && !lid.isBlank())
+            this.lid = lid;
+
+        if (this.id == null && this.lid == null)
+            throw new IllegalArgumentException("'id' and 'lid' must not both be null or blank.");
     }
 
     /**
@@ -53,6 +73,14 @@ public class ResourceIdentifierObject {
     @JsonGetter("id")
     public String getId() {
         return id;
+    }
+
+    /**
+     * @return the local id of this {@link ResourceIdentifierObject}.
+     */
+    @JsonGetter("lid")
+    public String getLid() {
+        return lid;
     }
 
     /**
@@ -75,15 +103,17 @@ public class ResourceIdentifierObject {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
 
         ResourceIdentifierObject that = (ResourceIdentifierObject) obj;
-        return Objects.equals(type, that.type) && Objects.equals(id, that.id);
+        return Objects.equals(type, that.type) && Objects.equals(id, that.id) && Objects.equals(lid, that.lid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, id);
+        return Objects.hash(type, id, lid);
     }
 }

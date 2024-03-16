@@ -55,11 +55,28 @@ public class Relationship extends ExtensionBase<Relationship> {
     /**
      * @param link the "self" link of this relationship.
      * @return this object.
+     * @throws IllegalArgumentException if the href is {@code null} or a blank String.
      */
     public Relationship setSelfLink(String link) {
-        links = Objects.requireNonNullElseGet(links, LinksObject::new);
-        links.add(Link.SELF, new Link(link));
+        return setSelfLink(new Link(link));
+    }
+
+    /**
+     * @param link the "self" link of this relationship.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public Relationship setSelfLink(Link link) {
+        links.add(Link.SELF, link);
         return this;
+    }
+
+    /**
+     * @return the "self" link of this relationship or {@code null} if it does not exist.
+     */
+    @JsonIgnore
+    public Link getSelfLink() {
+        return links.get(Link.SELF);
     }
 
     /**
@@ -72,12 +89,11 @@ public class Relationship extends ExtensionBase<Relationship> {
     }
 
     /**
-     * @return the "related" link of this relationship or {@code null} if this relationship does not contain a "related" link.
+     * @return the "related" link of this relationship or {@code null} if it does not exist.
      */
     @JsonIgnore
-    public String getRelatedResourceLink() {
-        Link link = links.get(Link.RELATED);
-        return link == null ? null : link.getHref();
+    public Link getRelatedResourceLink() {
+        return links.get(Link.RELATED);
     }
 
     /**

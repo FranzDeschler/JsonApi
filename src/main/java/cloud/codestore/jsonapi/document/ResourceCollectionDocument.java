@@ -33,6 +33,7 @@ public class ResourceCollectionDocument<T extends ResourceObject> extends JsonAp
      * @throws NullPointerException if {@code data} is {@code null}.
      */
     public ResourceCollectionDocument(T[] data) {
+        Objects.requireNonNull(data);
         setData(data);
     }
 
@@ -70,15 +71,14 @@ public class ResourceCollectionDocument<T extends ResourceObject> extends JsonAp
     /**
      * @param data the primary data of this JSON:API document.
      * @return this object.
-     * @throws NullPointerException if {@code data} is {@code null}.
      */
     @JsonSetter("data")
     public JsonApiDocument setData(T[] data) {
-        Objects.requireNonNull(data);
-
         this.data = data;
-        for (ResourceObject resourceObject : data)
-            resourceObject.setParent(this);
+
+        if (data != null)
+            for (ResourceObject resourceObject : data)
+                resourceObject.setParent(this);
 
         return this;
     }

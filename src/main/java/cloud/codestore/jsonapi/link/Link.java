@@ -41,6 +41,21 @@ public class Link extends ExtensionBase<Link> {
     private List<String> hreflang;
 
     /**
+     * Used internally for deserialization
+     */
+    @JsonCreator
+    private static Link create(@JsonProperty("href") String href) {
+        Link link = new Link();
+        link.href = href;
+        return link;
+    }
+
+    /**
+     * Used internally for deserialization
+     */
+    private Link() {}
+
+    /**
      * Creates a new {@link Link} with the given extension members.
      *
      * @param extensionMembers one or more members defined by an applied extension.
@@ -62,8 +77,7 @@ public class Link extends ExtensionBase<Link> {
      * @param href the link’s URL.
      * @throws IllegalArgumentException if the href is {@code null} or a blank String.
      */
-    @JsonCreator
-    public Link(@JsonProperty("href") String href) {
+    public Link(String href) {
         if (href == null || href.isBlank())
             throw new IllegalArgumentException("Parameter 'href' must not be null or blank.");
 

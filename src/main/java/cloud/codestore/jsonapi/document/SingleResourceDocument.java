@@ -18,7 +18,9 @@ import java.util.Objects;
 public class SingleResourceDocument<T extends ResourceObject> extends JsonApiDocument {
     private T data;
 
-    /** Used internally for deserialization. */
+    /**
+     * Used internally for deserialization.
+     */
     SingleResourceDocument() {}
 
     /**
@@ -28,6 +30,7 @@ public class SingleResourceDocument<T extends ResourceObject> extends JsonApiDoc
      * @throws NullPointerException if {@code data} is {@code null}.
      */
     public SingleResourceDocument(T data) {
+        Objects.requireNonNull(data);
         setData(data);
     }
 
@@ -49,7 +52,7 @@ public class SingleResourceDocument<T extends ResourceObject> extends JsonApiDoc
      * Creates a new {@link SingleResourceDocument} with the given extension members.
      *
      * @param extensionMembers one or more members defined by an applied extension.
-     * @throws NullPointerException if {@code extensionMembers} is {@code null}.
+     * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
      * @throws IllegalArgumentException if {@code extensionMembers} is empty.
      * @throws IllegalArgumentException if the name of one or more extension members is invalid.
      */
@@ -64,16 +67,13 @@ public class SingleResourceDocument<T extends ResourceObject> extends JsonApiDoc
 
     /**
      * @param data the primary data of this JSON:API document.
-     * @throws NullPointerException if {@code data} is {@code null}.
      * @return this object.
      */
     @JsonSetter("data")
     public JsonApiDocument setData(T data) {
-        Objects.requireNonNull(data);
-
         this.data = data;
-        data.setParent(this);
-
+        if (data != null)
+            data.setParent(this);
         return this;
     }
 

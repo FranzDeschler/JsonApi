@@ -52,21 +52,21 @@ public class LinksObject extends ExtensionBase<LinksObject> {
     }
 
     /**
-     * Returns the {@link Link} object associated with the given relation.
-     * @param relation the relation of the link to get.
-     * @return the associated link or {@code null} if there is no link with such a relation.
+     * Returns the {@link Link} object associated with the given name.
+     * @param name the name of a link.
+     * @return the associated link or {@code null} if there is no link with such a name.
      */
-    public Link get(String relation) {
-        return links.get(relation);
+    public Link get(String name) {
+        return links.get(name);
     }
 
     /**
-     * Returns the link associated with the given relation as String.
-     * @param relation the relation of a link.
-     * @return the associated link or {@code null} if there is no link with such a relation.
+     * Returns the link associated with the given name as String.
+     * @param name the name of a link.
+     * @return the associated link or {@code null} if there is no link with such a name.
      */
-    public String getHref(String relation) {
-        return links.containsKey(relation) ? links.get(relation).getHref() : null;
+    public String getHref(String name) {
+        return links.containsKey(name) ? links.get(name).getHref() : null;
     }
 
     /**
