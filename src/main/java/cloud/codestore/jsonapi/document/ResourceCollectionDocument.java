@@ -58,6 +58,7 @@ public class ResourceCollectionDocument<T extends ResourceObject> extends JsonAp
      * @throws NullPointerException if {@code extensionMembers} is {@code null}.
      * @throws IllegalArgumentException if {@code extensionMembers} is empty.
      * @throws IllegalArgumentException if the name of one or more extension members is invalid.
+     * @since 1.1
      */
     public ResourceCollectionDocument(Map<String, Object> extensionMembers) {
         Objects.requireNonNull(extensionMembers);

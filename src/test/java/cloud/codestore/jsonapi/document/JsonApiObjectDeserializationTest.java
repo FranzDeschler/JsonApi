@@ -76,4 +76,11 @@ class JsonApiObjectDeserializationTest {
             assertThat(((DummyMetaInformation) meta).info).isEqualTo("JSON:API related meta information");
         }
     }
+
+    @Test
+    @DisplayName("returns version 1.0 by default")
+    void defaultVersion10() {
+        var jsonApiObject = reader.read("{}", JsonApiObject.class);
+        assertThat(jsonApiObject.getVersion()).isEqualTo("1.0");
+    }
 }

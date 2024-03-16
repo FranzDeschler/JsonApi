@@ -12,7 +12,10 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a JSON:API document.<br/>
@@ -57,30 +60,6 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      */
     public static <T extends ResourceObject> JsonApiDocument of(T[] data) {
         return new ResourceCollectionDocument<>(data);
-    }
-
-    /**
-     * Factory method to create a JSON:API document which does not contain primary data.
-     *
-     * @param meta a {@link MetaInformation meta object} that contains non-standard meta-information about the JSON:API document.
-     * @return a new {@link JsonApiDocument JSON:API document}.
-     * @throws NullPointerException if {@code meta} is {@code null}.
-     */
-    public static JsonApiDocument of(MetaInformation meta) {
-        return new SingleResourceDocument<>(meta);
-    }
-
-    /**
-     * Factory method to create a JSON:API document which only contains extension members.
-     *
-     * @param extensionMembers one or more members defined by an applied extension.
-     * @return a new {@link JsonApiDocument JSON:API document}.
-     * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
-     * @throws IllegalArgumentException if {@code extensionMembers} is empty.
-     * @throws IllegalArgumentException if the name of one or more extension members is invalid.
-     */
-    public static JsonApiDocument of(Map<String, Object> extensionMembers) {
-        return new SingleResourceDocument<>(extensionMembers);
     }
 
     /**
@@ -135,33 +114,6 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     @JsonIgnore
     public Link getSelfLink() {
         return links.get(Link.SELF);
-    }
-
-    /**
-     * @param related a related resource link when the primary data represents a resource relationship.
-     * @return this object.
-     * @throws IllegalArgumentException if the link is {@code null} or empty.
-     */
-    public JsonApiDocument setRelatedLink(String related) {
-        return setRelatedLink(new Link(related));
-    }
-
-    /**
-     * @param related a related resource link when the primary data represents a resource relationship.
-     * @return this object.
-     * @throws NullPointerException if the link is {@code null}.
-     */
-    public JsonApiDocument setRelatedLink(Link related) {
-        Objects.requireNonNull(related);
-        return addLink(Link.RELATED, related);
-    }
-
-    /**
-     * @return a related resource link when the primary data represents a resource relationship. May be {@code null}.
-     */
-    @JsonIgnore
-    public Link getRelatedLink() {
-        return links.get(Link.RELATED);
     }
 
     /**

@@ -55,6 +55,7 @@ public class SingleResourceDocument<T extends ResourceObject> extends JsonApiDoc
      * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
      * @throws IllegalArgumentException if {@code extensionMembers} is empty.
      * @throws IllegalArgumentException if the name of one or more extension members is invalid.
+     * @since 1.1
      */
     public SingleResourceDocument(Map<String, Object> extensionMembers) {
         Objects.requireNonNull(extensionMembers);

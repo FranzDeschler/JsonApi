@@ -52,6 +52,7 @@ public class ErrorSource {
 
     /**
      * @return the name of a single request header which caused the error.
+     * @since 1.1
      */
     @JsonGetter("header")
     public String getHeader() {
@@ -61,6 +62,7 @@ public class ErrorSource {
     /**
      * @param header the name of a single request header which caused the error.
      * @return this object.
+     * @since 1.1
      */
     @JsonSetter("header")
     public ErrorSource setHeader(String header) {

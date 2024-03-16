@@ -39,6 +39,7 @@ public class ResourceIdentifierObject {
      * @param id   the id of the resource.
      * @param lid  the local id of the resource if it represents a new resource to be created on the server.
      * @throws IllegalArgumentException if {@code type} or both, {@code id} and {@code lid} are {@code null} or blank.
+     * @since 1.1
      */
     @JsonCreator
     public ResourceIdentifierObject(
@@ -77,6 +78,7 @@ public class ResourceIdentifierObject {
 
     /**
      * @return the local id of this {@link ResourceIdentifierObject}.
+     * @since 1.1
      */
     @JsonGetter("lid")
     public String getLid() {

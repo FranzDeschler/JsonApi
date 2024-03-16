@@ -75,6 +75,9 @@ class TopLevelSerializationTest {
             @Test
             @DisplayName("an array of error objects.")
             void errors() {
+                // empty error document not allowed
+                assertThatThrownBy(ErrorDocument::new).isInstanceOf(IllegalArgumentException.class);
+
                 var errors = new ErrorDocument(
                         new ErrorObject().setCode("1"),
                         new ErrorObject().setCode("2")
@@ -179,18 +182,6 @@ class TopLevelSerializationTest {
                     {
                       "links": {
                         "self": "/articles/1"
-                      }
-                    }""", document);
-        }
-
-        @Test
-        @DisplayName("a related resource link")
-        void relatedLink() {
-            document.setRelatedLink("/articles/1");
-            assertEquals("""
-                    {
-                      "links": {
-                        "related": "/articles/1"
                       }
                     }""", document);
         }

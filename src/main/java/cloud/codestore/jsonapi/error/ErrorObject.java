@@ -149,6 +149,7 @@ public class ErrorObject {
      * @param link a link that identifies the type of error that this particular error is an instance of.
      * @return this object.
      * @throws IllegalArgumentException if the link is {@code null} or blank.
+     * @since 1.1
      */
     public ErrorObject setTypeLink(String link) {
         return setTypeLink(new Link(link));
@@ -158,6 +159,7 @@ public class ErrorObject {
      * @param link a {@link Link} that identifies the type of error that this particular error is an instance of.
      * @return this object.
      * @throws NullPointerException if the link is {@code null}.
+     * @since 1.1
      */
     public ErrorObject setTypeLink(Link link) {
         links.add(Link.TYPE, link);
@@ -167,6 +169,7 @@ public class ErrorObject {
     /**
      * @return a link that identifies the type of error that this particular error is an instance of.
      * May be {@code null}.
+     * @since 1.1
      */
     @JsonIgnore
     public Link getTypeLink() {

@@ -83,6 +83,7 @@ public class JsonApiObject {
     /**
      * @param extensions an array of URIs for all applied extensions.
      * @return this object.
+     * @since 1.1
      */
     @JsonSetter("ext")
     public JsonApiObject setExtensions(String... extensions) {
@@ -93,6 +94,7 @@ public class JsonApiObject {
     /**
      * @param profiles an array of URIs for all applied profiles.
      * @return this object.
+     * @since 1.1
      */
     @JsonSetter("profile")
     public JsonApiObject setProfiles(String... profiles) {
@@ -102,6 +104,7 @@ public class JsonApiObject {
 
     /**
      * @return a list of URIs for all applied extensions. May be {@code null}.
+     * @since 1.1
      */
     @JsonSetter("ext")
     public List<String> getExtensions() {
@@ -110,6 +113,7 @@ public class JsonApiObject {
 
     /**
      * @return a list of URIs for all applied profiles. May be {@code null}.
+     * @since 1.1
      */
     @JsonSetter("profile")
     public List<String> getProfiles() {

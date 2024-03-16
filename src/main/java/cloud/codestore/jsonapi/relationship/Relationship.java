@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -31,25 +30,20 @@ public class Relationship extends ExtensionBase<Relationship> {
      * Creates a new relationship with the given link as "related" link.
      *
      * @param relatedResourceLink a <a href="https://jsonapi.org/format/1.1/#document-resource-object-related-resource-links">link to the related resource</a>.
+     * @throws IllegalArgumentException if the href is {@code null} or a blank String.
      */
     public Relationship(String relatedResourceLink) {
         setRelatedResourceLink(relatedResourceLink);
     }
 
     /**
-     * Creates a new {@link Relationship} with the given extension members.
+     * Creates a new relationship with the given link as "related" link.
      *
-     * @param extensionMembers one or more members defined by an applied extension.
-     * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
-     * @throws IllegalArgumentException if {@code extensionMembers} is empty or if the name of one or more extension members is invalid.
+     * @param relatedResourceLink a <a href="https://jsonapi.org/format/1.1/#document-resource-object-related-resource-links">link to the related resource</a>.
+     * @throws NullPointerException if the link is {@code null}.
      */
-    public Relationship(Map<String, Object> extensionMembers) {
-        Objects.requireNonNull(extensionMembers);
-        if (extensionMembers.isEmpty()) {
-            throw new IllegalArgumentException("Extension members must not be empty");
-        }
-
-        setExtensionMembers(extensionMembers);
+    public Relationship(Link relatedResourceLink) {
+        setRelatedResourceLink(relatedResourceLink);
     }
 
     /**
@@ -84,7 +78,17 @@ public class Relationship extends ExtensionBase<Relationship> {
      * @return this object.
      */
     public Relationship setRelatedResourceLink(String relatedResourceLink) {
-        links.add(Link.RELATED, new Link(relatedResourceLink));
+        return setRelatedResourceLink(new Link(relatedResourceLink));
+    }
+
+    /**
+     * @param relatedResourceLink sets the "related" link of this relationship.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public Relationship setRelatedResourceLink(Link relatedResourceLink) {
+        Objects.requireNonNull(relatedResourceLink);
+        links.add(Link.RELATED, relatedResourceLink);
         return this;
     }
 

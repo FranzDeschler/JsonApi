@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -54,22 +53,6 @@ public class Link extends ExtensionBase<Link> {
      * Used internally for deserialization
      */
     private Link() {}
-
-    /**
-     * Creates a new {@link Link} with the given extension members.
-     *
-     * @param extensionMembers one or more members defined by an applied extension.
-     * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
-     * @throws IllegalArgumentException if {@code extensionMembers} is empty or if the name of one or more extension members is invalid.
-     */
-    public Link(Map<String, Object> extensionMembers) {
-        Objects.requireNonNull(extensionMembers);
-        if (extensionMembers.isEmpty()) {
-            throw new IllegalArgumentException("Extension members must not be empty");
-        }
-
-        setExtensionMembers(extensionMembers);
-    }
 
     /**
      * Creates a new {@link Link} object.
@@ -114,6 +97,7 @@ public class Link extends ExtensionBase<Link> {
      * @param relation a string indicating the link’s relation type.
      *                 The string MUST be a <a href="https://datatracker.ietf.org/doc/html/rfc8288#section-2.1">valid link relation type</a>.
      * @return this object.
+     * @since 1.1
      */
     @JsonSetter("rel")
     public Link setRelation(String relation) {
@@ -123,6 +107,7 @@ public class Link extends ExtensionBase<Link> {
 
     /**
      * @return a link to a description document (e.g. OpenAPI or JSON Schema) for the link target.
+     * @since 1.1
      */
     @JsonGetter(DESCRIBEDBY)
     public Link getDescribedby() {
@@ -132,6 +117,7 @@ public class Link extends ExtensionBase<Link> {
     /**
      * @param describedby a link to a description document (e.g. OpenAPI or JSON Schema) for the link target.
      * @return this object.
+     * @since 1.1
      */
     @JsonSetter(DESCRIBEDBY)
     public Link setDescribedby(Link describedby) {
@@ -141,6 +127,7 @@ public class Link extends ExtensionBase<Link> {
 
     /**
      * @return a string which serves as a label for the destination of a link such that it can be used as a human-readable identifier (e.g., a menu entry).
+     * @since 1.1
      */
     @JsonGetter("title")
     public String getTitle() {
@@ -151,6 +138,7 @@ public class Link extends ExtensionBase<Link> {
      *
      * @param title a string which serves as a label for the destination of a link such that it can be used as a human-readable identifier (e.g., a menu entry).
      * @return this object.
+     * @since 1.1
      */
     @JsonSetter("title")
     public Link setTitle(String title) {
@@ -160,6 +148,7 @@ public class Link extends ExtensionBase<Link> {
 
     /**
      * @return the media type of the link’s target.
+     * @since 1.1
      */
     @JsonGetter("type")
     public String getType() {
@@ -169,6 +158,7 @@ public class Link extends ExtensionBase<Link> {
     /**
      * @param type the media type of the link’s target.
      * @return this object.
+     * @since 1.1
      */
     @JsonSetter("type")
     public Link setType(String type) {
@@ -178,6 +168,7 @@ public class Link extends ExtensionBase<Link> {
 
     /**
      * @return a List, containing one or more Strings indicating the language(s) of the link’s target.
+     * @since 1.1
      */
     @JsonGetter("hreflang")
     @JsonSerialize(using = HreflangSerializer.class)
@@ -189,6 +180,7 @@ public class Link extends ExtensionBase<Link> {
      * @param hreflang one or more Strings indicating the language(s) of the link’s target.
      *                 Each string MUST be a valid language tag [<a href="https://datatracker.ietf.org/doc/html/rfc5646">RFC5646</a>].
      * @return this object.
+     * @since 1.1
      */
     @JsonSetter("hreflang")
     @JsonDeserialize(using = HreflangDeserializer.class)

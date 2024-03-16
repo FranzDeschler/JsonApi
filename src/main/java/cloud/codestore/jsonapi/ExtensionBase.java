@@ -16,6 +16,7 @@ public class ExtensionBase<T extends ExtensionBase> {
      * @param extensionMembers the extension members to set on this JSON:API document.
      * @throws NullPointerException     if {@code extensionMembers} is {@code null}.
      * @throws IllegalArgumentException if the name of one or more members is invalid.
+     * @since 1.1
      */
     @SuppressWarnings("unchecked")
     public T setExtensionMembers(Map<String, Object> extensionMembers) {
@@ -35,6 +36,7 @@ public class ExtensionBase<T extends ExtensionBase> {
      * @param value      the corresponding value of the member.
      * @throws NullPointerException     if {@code memberName} is {@code null}.
      * @throws IllegalArgumentException if {@code memberName} is invalid.
+     * @since 1.1
      */
     @SuppressWarnings("unchecked")
     public T setExtensionMember(String memberName, Object value) {
@@ -54,6 +56,7 @@ public class ExtensionBase<T extends ExtensionBase> {
      * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
      * @return the associated value or {@code null}.
      * @throws NullPointerException if {@code memberName} is {@code null}.
+     * @since 1.1
      */
     @JsonIgnore
     public Object getExtensionMember(String memberName) {

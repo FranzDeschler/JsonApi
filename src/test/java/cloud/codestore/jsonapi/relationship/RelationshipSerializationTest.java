@@ -6,8 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static cloud.codestore.jsonapi.JsonAssertion.assertEquals;
 
 /**
@@ -88,7 +86,7 @@ class RelationshipSerializationTest {
         @Test
         @DisplayName("a member defined by an applied extension")
         void extensionMember() {
-            var relationship = new Relationship(Map.of("dummy:ext", "test"));
+            var relationship = new Relationship().setExtensionMember("dummy:ext", "test");
             assertEquals("""
                     {
                       "dummy:ext": "test"

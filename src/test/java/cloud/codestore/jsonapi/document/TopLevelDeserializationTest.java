@@ -174,21 +174,6 @@ class TopLevelDeserializationTest {
         }
 
         @Test
-        @DisplayName("a related resource link")
-        void relatedLink() {
-            var document = reader.read("""
-                    {
-                      "links": {
-                        "related": "/articles/1"
-                      }
-                    }""", JsonApiDocument.class);
-
-            Link link = document.getRelatedLink();
-            assertThat(link).isNotNull();
-            assertThat(link.getHref()).isEqualTo("/articles/1");
-        }
-
-        @Test
         @DisplayName("a link to a description document")
         void describedbyLink() {
             var document = reader.read("""

@@ -88,7 +88,7 @@ public abstract class ResourceObject {
      * @throws IllegalArgumentException if {@code self} is {@code null} or blank.
      */
     public ResourceObject setSelfLink(String self) {
-        links.add(new Link(Link.SELF, self));
+        links.add(Link.SELF, new Link(self));
         return this;
     }
 
