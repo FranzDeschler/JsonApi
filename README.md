@@ -15,7 +15,7 @@ What this library does not:
   Thus, the structure of the Java objects corresponds to the JSON structure (with some exceptions).
 
 ## JSON:API Version
-The current version of the library only supports the JSON:API format [1.1](https://jsonapi.org/format/1.1/)
+The current version of the library supports the JSON:API format [1.1](https://jsonapi.org/format/1.1/)
 
 ## Maven
 The library can be included via Maven. It contains Jackson as its only dependency. 
