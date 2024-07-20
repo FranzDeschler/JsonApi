@@ -149,14 +149,14 @@ In their simplest way, relationships only contains the URL to the related resour
 ```java
 public class Article extends ResourceObject {
     @JsonProperty("title") private String title;
-    @JsonProperty("author") private ToOneRelationship<Person> author;
-    @JsonProperty("author") private ToManyRelationship<Comment> comments;
+    @JsonProperty("author") private Relationship author;
+    @JsonProperty("author") private Relationship comments;
 
     public Article(String id, String title) {
         super("article", id);
         this.title = title;
-        this.author = new ToOneRelationship<>("https://example.com/articles/" + id + "/author");
-        this.comments = new ToManyRelationship<>("https://example.com/articles/" + id + "/comments");
+        this.author = new Relationship("https://example.com/articles/" + id + "/author");
+        this.comments = new Relationship("https://example.com/articles/" + id + "/comments");
     }
 }
 
@@ -250,7 +250,7 @@ public class Article extends ResourceObject {
 }
 ```
 
-## Meta Informations
+## Meta Information
 Meta information objects are regular Jackson objects with the only condition that they need to implement the `MetaInformation` interface.
 That interface contains no methods and has only a declarative function.
 ```java
@@ -280,19 +280,39 @@ var document = JsonApiDocument.of(person).setMeta(meta);
 
 ## JSON:API Objects
 A `JsonApiObject` can be placed in the top level `JsonApiDocument` and include implementation information.
+In addition to the specification version, it may contain information about used extensions and profiles.
 ```java
+var jsonApiObject = new JsonApiObject()
+        .setExtensions("https://jsonapi.org/ext/atomic")
+        .setProfiles("https://example.com/profiles/flexible-pagination", "https://example.com/profiles/resource-versioning");
+
 var document = JsonApiDocument.of(person).setJsonapiObject(new JsonApiObject());
 ```
 ```json
 {
   "jsonapi": {
-    "version": "1.1"
+    "version": "1.1",
+    "ext": [
+      "https://jsonapi.org/ext/atomic"
+    ],
+    "profile": [
+      "https://example.com/profiles/flexible-pagination",
+      "https://example.com/profiles/resource-versioning"
+    ]
   },
   "data": {
     "type": "person",
     "id": "1"
   }
 }
+```
+
+## Extensions
+Almost every JSON:API object can be extended by custom extension members.
+The following example adds a `version:id` member to the top-level of the JSON:API document.
+```java
+var document = JsonApiDocument.of(person);
+document.setExtensionMember("version:id", "42");
 ```
 
 ## Error Objects
@@ -366,9 +386,9 @@ public class Comment extends ResourceObject {
 To be able to deserialize resource objects, the types need to be registered in the `ObjectMapper`.
 ```java
 ObjectMapper objectMapper = new JsonApiObjectMapper()
-        .registerResourceType("person", Person.class)
-        .registerResourceType("article", Article.class)
-        .registerResourceType("comment", Comment.class);
+        .registerResourceType(Person.class)
+        .registerResourceType(Article.class)
+        .registerResourceType(Comment.class);
 ```
 
 ## JSON:API Documents

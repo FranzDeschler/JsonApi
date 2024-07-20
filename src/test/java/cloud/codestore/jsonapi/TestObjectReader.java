@@ -10,22 +10,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.assertj.core.api.Assertions;
 
 import java.lang.reflect.Type;
-import java.util.Map;
 
 public class TestObjectReader {
     private final MetaDeserializerProxy metaDeserializer = new MetaDeserializerProxy();
     private final ObjectMapper INSTANCE;
 
-    public TestObjectReader() {
-        this(Map.of());
-    }
-
-    public TestObjectReader(Map<String, Class<? extends ResourceObject>> resourceMapping) {
+    @SafeVarargs
+    public TestObjectReader(Class<? extends ResourceObject>... classes) {
         var objectMapper = new JsonApiObjectMapper(metaDeserializer);
-        for (var mapping : resourceMapping.entrySet()) {
-            objectMapper.registerResourceType(mapping.getKey(), mapping.getValue());
+        for (Class<? extends ResourceObject> aClass : classes) {
+            objectMapper.registerResourceType(aClass);
         }
-
         this.INSTANCE = objectMapper;
     }
 

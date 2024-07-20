@@ -43,4 +43,24 @@ public class JsonApiObjectMapper extends ObjectMapper {
         registerSubtypes(new NamedType(type, typeName));
         return this;
     }
+
+    /**
+     * Binds the type of a JSON:API resource object with the corresponding Java class.
+     * The name of the JSON:API resource object is derived from the name of the given class.
+     * For example, {@code Article.class} will be bound to the resource name {@code "article"}.
+     *
+     * @param type a Java class.
+     * @return this object.
+     * @throws IllegalArgumentException if the given class is an anonymous class which has no name.
+     */
+    public JsonApiObjectMapper registerResourceType(Class<? extends ResourceObject> type) {
+        String typeName = type.getSimpleName();
+        if (typeName.isEmpty()) {
+            throw new IllegalArgumentException("Anonymous classes are not allowed in this method.");
+        }
+
+        typeName = Character.toLowerCase(typeName.charAt(0)) + typeName.substring(1);
+        registerSubtypes(new NamedType(type, typeName));
+        return this;
+    }
 }

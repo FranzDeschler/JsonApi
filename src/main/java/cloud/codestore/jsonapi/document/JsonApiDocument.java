@@ -47,7 +47,7 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      * @return a new {@link JsonApiDocument JSON:API document}.
      * @throws NullPointerException if {@code data} is {@code null}.
      */
-    public static <T extends ResourceObject> JsonApiDocument of(T data) {
+    public static <T extends ResourceObject> SingleResourceDocument<T> of(T data) {
         return new SingleResourceDocument<>(data);
     }
 
@@ -58,7 +58,7 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      * @return a new {@link JsonApiDocument JSON:API document}.
      * @throws NullPointerException if {@code data} is {@code null}.
      */
-    public static <T extends ResourceObject> JsonApiDocument of(T[] data) {
+    public static <T extends ResourceObject> ResourceCollectionDocument<T> of(T[] data) {
         return new ResourceCollectionDocument<>(data);
     }
 

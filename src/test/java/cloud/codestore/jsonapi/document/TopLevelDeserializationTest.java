@@ -14,18 +14,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * See <a href="https://jsonapi.org/format/1.1/#document-top-level">jsonapi.org</a>
  */
 class TopLevelDeserializationTest {
-    private static final TestObjectReader reader = new TestObjectReader(Map.of(
-            "article", Article.class,
-            "person", Person.class
-    ));
+    private static final TestObjectReader reader = new TestObjectReader(Article.class, Person.class);
 
     @Nested
     @DisplayName("A JSON:API document")

@@ -11,8 +11,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -20,11 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @DisplayName("A compound document")
 class CompoundDocumentDeserializationTest {
-    private static final TestObjectReader reader = new TestObjectReader(Map.of(
-            "article", Article.class,
-            "person", Person.class,
-            "comment", Comment.class
-    ));
+    private static final TestObjectReader reader = new TestObjectReader(Article.class, Person.class, Comment.class);
 
     @Test
     @DisplayName("must contain an array of resource objects in a top-level included member")

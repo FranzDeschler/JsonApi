@@ -8,8 +8,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -40,7 +38,7 @@ class GenericResourceTypeTest {
     }
 
     private <T extends ResourceObject> ResourceCollectionDocument<T> readCollection(Class<T> type) {
-        return new TestObjectReader(Map.of("person", Person.class)).read("""
+        return new TestObjectReader(Person.class).read("""
                 {
                   "data" : [{
                     "type": "person",

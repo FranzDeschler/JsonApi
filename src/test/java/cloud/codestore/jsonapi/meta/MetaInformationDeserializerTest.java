@@ -15,18 +15,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("A meta object can be deserialized")
 class MetaInformationDeserializerTest {
 
-    private TestObjectReader reader = new TestObjectReader(Map.of(
-            "article", Article.class,
-            "person", Person.class,
-            "comment", Comment.class
-    ));
+    private TestObjectReader reader = new TestObjectReader(Article.class, Person.class, Comment.class);
     private MetaDeserializer metaDeserializer;
 
     @Test
