@@ -59,7 +59,7 @@ class TopLevelSerializationTest {
             @DisplayName("the document’s primary data")
             void primaryData() {
                 var article = new Article("1", "The article's title");
-                var document = new SingleResourceDocument<>(article);
+                var document = JsonApiDocument.of(article);
                 assertEquals("""
                         {
                           "data": {
@@ -147,7 +147,7 @@ class TopLevelSerializationTest {
             @DisplayName("an array of included resource objects")
             void includedResources() {
                 var article = new Article("1", new Person("5"));
-                var document = new SingleResourceDocument<>(article);
+                var document = JsonApiDocument.of(article);
                 assertEquals("""
                         {
                           "data": {
@@ -199,8 +199,9 @@ class TopLevelSerializationTest {
         }
 
         @Test
-        @DisplayName("pagination links for the primary data")
+        @DisplayName("pagination links for the primary data of a collection")
         void paginationLinks() {
+            var document = new ResourceCollectionDocument<>(new Article[0]);
             document.setFirstPageLink("/articles?page[number]=1")
                     .setPreviousPageLink("/articles?page[number]=5")
                     .setNextPageLink("/articles?page[number]=7")
@@ -208,6 +209,7 @@ class TopLevelSerializationTest {
 
             assertEquals("""
                     {
+                      "data": [],
                       "links": {
                         "first": "/articles?page[number]=1",
                         "prev": "/articles?page[number]=5",
@@ -228,7 +230,7 @@ class TopLevelSerializationTest {
             @DisplayName("a single resource object")
             void singleResourceObject() {
                 var article = new Article("1", "The article's title");
-                var document = new SingleResourceDocument<>(article);
+                var document = JsonApiDocument.of(article);
                 assertEquals("""
                         {
                           "data": {
@@ -249,7 +251,7 @@ class TopLevelSerializationTest {
             @DisplayName("a single resource identifier object")
             void resourceIdentifierObject() {
                 var article = new Article("1");
-                var document = new SingleResourceDocument<>(article);
+                var document = JsonApiDocument.of(article);
                 assertEquals("""
                         {
                           "data": {
@@ -262,7 +264,7 @@ class TopLevelSerializationTest {
             @Test
             @DisplayName("null")
             void noPrimaryData() {
-                var document = new SingleResourceDocument<>(new DummyMetaInformation());
+                var document = JsonApiDocument.of(new DummyMetaInformation());
                 assertThat(TestObjectWriter.write(document)).doesNotContain("\"data\" : {");
             }
         }

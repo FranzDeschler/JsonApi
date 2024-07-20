@@ -9,7 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class ExtensionBase<T extends ExtensionBase> {
+/**
+ * The base class for all objects that may contain extension members.
+ * @param <T> the type of the direct subclass. Used for return values.
+ */
+public abstract class ExtensionBase<T extends ExtensionBase> {
     private Map<String, Object> extensionMembers = new HashMap<>();
 
     /**

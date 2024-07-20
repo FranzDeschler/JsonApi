@@ -29,6 +29,7 @@ public class LinksObject extends ExtensionBase<LinksObject> {
      */
     @Deprecated(since = "1.1", forRemoval = true)
     public LinksObject add(Link link) {
+        // marked as deprecated since the link name should be set explicitly
         Objects.requireNonNull(link);
         this.links.put(link.getRelation(), link);
         link.setRelation(null);

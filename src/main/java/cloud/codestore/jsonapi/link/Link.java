@@ -72,6 +72,7 @@ public class Link extends ExtensionBase<Link> {
      */
     @Deprecated(since = "1.1")
     public Link(String relation, String href) {
+        // marked as deprecated since optional properties should be set via the corresponding setter.
         this(href);
         this.relation = relation;
     }
@@ -81,6 +82,7 @@ public class Link extends ExtensionBase<Link> {
      */
     @Deprecated(since = "1.1")
     public Link(String relation, String href, MetaInformation meta) {
+        // marked as deprecated since optional properties should be set via the corresponding setter.
         this(relation, href);
         this.meta = meta;
     }

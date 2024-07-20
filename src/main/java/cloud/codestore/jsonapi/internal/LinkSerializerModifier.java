@@ -1,7 +1,6 @@
 package cloud.codestore.jsonapi.internal;
 
 import cloud.codestore.jsonapi.link.Link;
-import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -13,10 +12,9 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.IOException;
 
 /**
- * Modifies the way, how {@link ResourceObject}s are serialized.
- * <br/><br/>
- * Instances of {@link ResourceObject}s contain attributes and relationships in its own fields.
- * This {@link ResourceObject} wraps these fields in virtual objects.
+ * Dynamically serializes {@link Link}s.
+ * Links, that only contain the URI, are serialized as string.
+ * Otherwise, links are serialized as object.
  */
 public class LinkSerializerModifier extends BeanSerializerModifier {
     @Override

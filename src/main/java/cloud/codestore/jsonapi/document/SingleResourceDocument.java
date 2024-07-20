@@ -71,7 +71,7 @@ public class SingleResourceDocument<T extends ResourceObject> extends JsonApiDoc
      * @return this object.
      */
     @JsonSetter("data")
-    public JsonApiDocument setData(T data) {
+    public SingleResourceDocument<T> setData(T data) {
         this.data = data;
         if (data != null)
             data.setParent(this);

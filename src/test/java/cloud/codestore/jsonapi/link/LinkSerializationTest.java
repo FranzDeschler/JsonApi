@@ -16,7 +16,7 @@ class LinkSerializationTest {
     @Test
     @DisplayName("must contain a string pointing to the link’s target")
     void hrefRequired() {
-        assertThatThrownBy(() -> new Link((String) null))
+        assertThatThrownBy(() -> new Link(null))
                 .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> new Link(""))
                 .isInstanceOf(IllegalArgumentException.class);

@@ -184,17 +184,18 @@ class TopLevelDeserializationTest {
         }
 
         @Test
-        @DisplayName("pagination links for the primary data")
+        @DisplayName("pagination links for the primary data of a collection")
         void paginationLinks() {
             var document = reader.read("""
                     {
+                    "data": [],
                       "links": {
                         "first": "/articles?page[number]=1",
                         "prev": "/articles?page[number]=5",
                         "next": "/articles?page[number]=7",
                         "last": "/articles?page[number]=12"
                       }
-                    }""", JsonApiDocument.class);
+                    }""", new TypeReference<ResourceCollectionDocument<Article>>() {});
 
             assertThat(document.getFirstPageLink().getHref()).isEqualTo("/articles?page[number]=1");
             assertThat(document.getPreviousPageLink().getHref()).isEqualTo("/articles?page[number]=5");

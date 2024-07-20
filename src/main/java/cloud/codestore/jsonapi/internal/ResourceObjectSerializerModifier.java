@@ -15,7 +15,7 @@ import java.util.List;
  * Modifies the way, how {@link ResourceObject}s are serialized.
  * <br/><br/>
  * Instances of {@link ResourceObject}s contain attributes and relationships in its own fields.
- * This {@link ResourceObject} wraps these fields in virtual objects.
+ * This modifier wraps these fields in virtual objects.
  */
 public class ResourceObjectSerializerModifier extends BeanSerializerModifier {
     // Do not change the order of this list. It is used for ordering the properties.

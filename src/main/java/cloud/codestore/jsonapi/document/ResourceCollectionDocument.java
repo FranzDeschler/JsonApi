@@ -1,5 +1,6 @@
 package cloud.codestore.jsonapi.document;
 
+import cloud.codestore.jsonapi.link.Link;
 import cloud.codestore.jsonapi.meta.MetaInformation;
 import cloud.codestore.jsonapi.resource.ResourceObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -74,7 +75,7 @@ public class ResourceCollectionDocument<T extends ResourceObject> extends JsonAp
      * @return this object.
      */
     @JsonSetter("data")
-    public JsonApiDocument setData(T[] data) {
+    public ResourceCollectionDocument<T> setData(T[] data) {
         this.data = data;
 
         if (data != null)
@@ -108,5 +109,117 @@ public class ResourceCollectionDocument<T extends ResourceObject> extends JsonAp
         return Arrays.stream(data)
                      .map(type::cast)
                      .toArray(size -> (T[]) Array.newInstance(type, size));
+    }
+
+    /**
+     * @param firstPage a link to the first page of the primary data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     */
+    public ResourceCollectionDocument<T> setFirstPageLink(String firstPage) {
+        return setFirstPageLink(new Link(firstPage));
+    }
+
+    /**
+     * @param firstPage a link to the first page of the primary data.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public ResourceCollectionDocument<T> setFirstPageLink(Link firstPage) {
+        Objects.requireNonNull(firstPage);
+        getLinks().add(Link.FIRST, firstPage);
+        return this;
+    }
+
+    /**
+     * @return a link to the first page of the primary data. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getFirstPageLink() {
+        return getLink(Link.FIRST);
+    }
+
+    /**
+     * @param lastPage a link to the last page of the primary data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     */
+    public ResourceCollectionDocument<T> setLastPageLink(String lastPage) {
+        return setLastPageLink(new Link(lastPage));
+    }
+
+    /**
+     * @param lastPage a {@link Link} to the last page of the primary data.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public ResourceCollectionDocument<T> setLastPageLink(Link lastPage) {
+        Objects.requireNonNull(lastPage);
+        getLinks().add(Link.LAST, lastPage);
+        return this;
+    }
+
+    /**
+     * @return a link to the last page of the primary data. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getLastPageLink() {
+        return getLink(Link.LAST);
+    }
+
+    /**
+     * @param previousPage a link to the previous page of the primary data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     */
+    public ResourceCollectionDocument<T> setPreviousPageLink(String previousPage) {
+        return setPreviousPageLink(new Link(previousPage));
+    }
+
+    /**
+     * @param previousPage a {@link Link} to the previous page of the primary data.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public ResourceCollectionDocument<T> setPreviousPageLink(Link previousPage) {
+        Objects.requireNonNull(previousPage);
+        getLinks().add(Link.PREV, previousPage);
+        return this;
+    }
+
+    /**
+     * @return a link to the previous page of the primary data. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getPreviousPageLink() {
+        return getLink(Link.PREV);
+    }
+
+    /**
+     * @param nextPage a link to the next page of the primary data.
+     * @return this object.
+     * @throws IllegalArgumentException if the link is {@code null} or empty.
+     */
+    public ResourceCollectionDocument<T> setNextPageLink(String nextPage) {
+        return setNextPageLink(new Link(nextPage));
+    }
+
+    /**
+     * @param nextPage a {@link Link} to the next page of the primary data.
+     * @return this object.
+     * @throws NullPointerException if the link is {@code null}.
+     */
+    public ResourceCollectionDocument<T> setNextPageLink(Link nextPage) {
+        Objects.requireNonNull(nextPage);
+        getLinks().add(Link.NEXT, nextPage);
+        return this;
+    }
+
+    /**
+     * @return a link to the next page of the primary data. May be {@code null}.
+     */
+    @JsonIgnore
+    public Link getNextPageLink() {
+        return getLink(Link.NEXT);
     }
 }

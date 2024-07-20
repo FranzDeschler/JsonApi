@@ -63,6 +63,17 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
     }
 
     /**
+     * Factory method to create a JSON:API document which does not contain primary data.
+     *
+     * @param meta a {@link MetaInformation meta object} that contains non-standard meta-information about the JSON:API document.
+     * @return a new {@link JsonApiDocument JSON:API document}.
+     * @throws NullPointerException if {@code meta} is {@code null}.
+     */
+    public static JsonApiDocument of(MetaInformation meta) {
+        return new SingleResourceDocument<>(meta);
+    }
+
+    /**
      * @param jsonapi a {@link JsonApiObject JSON:API Object} which contains information about the implementation of this JSON:API document.
      * @return this object.
      */
@@ -139,122 +150,11 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
 
     /**
      * @return a link to a description document. May be {@code null}.
+     * @since 1.1
      */
     @JsonIgnore
     public Link getDescribedbyLink() {
         return links.get(Link.DESCRIBEDBY);
-    }
-
-    /**
-     * @param firstPage a link to the first page of the primary data.
-     * @return this object.
-     * @throws IllegalArgumentException if the link is {@code null} or empty.
-     */
-    public JsonApiDocument setFirstPageLink(String firstPage) {
-        return setFirstPageLink(new Link(firstPage));
-    }
-
-    /**
-     * @param firstPage a link to the first page of the primary data.
-     * @return this object.
-     * @throws NullPointerException if the link is {@code null}.
-     */
-    public JsonApiDocument setFirstPageLink(Link firstPage) {
-        Objects.requireNonNull(firstPage);
-        getLinks().add(Link.FIRST, firstPage);
-        return this;
-    }
-
-    /**
-     * @return a link to the first page of the primary data. May be {@code null}.
-     */
-    @JsonIgnore
-    public Link getFirstPageLink() {
-        return links.get(Link.FIRST);
-    }
-
-    /**
-     * @param lastPage a link to the last page of the primary data.
-     * @return this object.
-     * @throws IllegalArgumentException if the link is {@code null} or empty.
-     */
-    public JsonApiDocument setLastPageLink(String lastPage) {
-        return setLastPageLink(new Link(lastPage));
-    }
-
-    /**
-     * @param lastPage a {@link Link} to the last page of the primary data.
-     * @return this object.
-     * @throws NullPointerException if the link is {@code null}.
-     */
-    public JsonApiDocument setLastPageLink(Link lastPage) {
-        Objects.requireNonNull(lastPage);
-        getLinks().add(Link.LAST, lastPage);
-        return this;
-    }
-
-    /**
-     * @return a link to the last page of the primary data. May be {@code null}.
-     */
-    @JsonIgnore
-    public Link getLastPageLink() {
-        return links.get(Link.LAST);
-    }
-
-    /**
-     * @param previousPage a link to the previous page of the primary data.
-     * @return this object.
-     * @throws IllegalArgumentException if the link is {@code null} or empty.
-     */
-    public JsonApiDocument setPreviousPageLink(String previousPage) {
-        return setPreviousPageLink(new Link(previousPage));
-    }
-
-    /**
-     * @param previousPage a {@link Link} to the previous page of the primary data.
-     * @return this object.
-     * @throws NullPointerException if the link is {@code null}.
-     */
-    public JsonApiDocument setPreviousPageLink(Link previousPage) {
-        Objects.requireNonNull(previousPage);
-        getLinks().add(Link.PREV, previousPage);
-        return this;
-    }
-
-    /**
-     * @return a link to the previous page of the primary data. May be {@code null}.
-     */
-    @JsonIgnore
-    public Link getPreviousPageLink() {
-        return links.get(Link.PREV);
-    }
-
-    /**
-     * @param nextPage a link to the next page of the primary data.
-     * @return this object.
-     * @throws IllegalArgumentException if the link is {@code null} or empty.
-     */
-    public JsonApiDocument setNextPageLink(String nextPage) {
-        return setNextPageLink(new Link(nextPage));
-    }
-
-    /**
-     * @param nextPage a {@link Link} to the next page of the primary data.
-     * @return this object.
-     * @throws NullPointerException if the link is {@code null}.
-     */
-    public JsonApiDocument setNextPageLink(Link nextPage) {
-        Objects.requireNonNull(nextPage);
-        getLinks().add(Link.NEXT, nextPage);
-        return this;
-    }
-
-    /**
-     * @return a link to the next page of the primary data. May be {@code null}.
-     */
-    @JsonIgnore
-    public Link getNextPageLink() {
-        return links.get(Link.NEXT);
     }
 
     /**
@@ -286,6 +186,7 @@ public abstract class JsonApiDocument extends ExtensionBase<JsonApiDocument> {
      */
     @Deprecated(since = "1.1", forRemoval = true)
     public JsonApiDocument addLink(Link link) {
+        // marked as deprecated since the link name should be set explicitly
         links.add(link);
         return this;
     }
