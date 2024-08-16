@@ -50,8 +50,11 @@ public class VirtualRelationshipsWriter extends VirtualBeanPropertyWriter {
             property.getMember().fixAccess(true);
             Relationship relationship = (Relationship) property.get(resourceObject);
             if (relationship != null) {
-                includeRelationship(relationship, ((ResourceObject) resourceObject).getParent());
                 relationships.put(property.getName(), relationship);
+
+                JsonApiDocument document = ((ResourceObject) resourceObject).getParent(); // only handle primary data relationships
+                if (relationship.isIncluded() && document != null)
+                    includeRelationship(relationship, document);
             }
         }
 
@@ -67,12 +70,10 @@ public class VirtualRelationshipsWriter extends VirtualBeanPropertyWriter {
     }
 
     private void includeRelationship(Relationship relationship, JsonApiDocument document) {
-        if (relationship.isIncluded() && document != null) {
-            if (relationship instanceof ToOneRelationship)
-                include((ToOneRelationship<?>) relationship, document);
-            else if (relationship instanceof ToManyRelationship)
-                include((ToManyRelationship<?>) relationship, document);
-        }
+        if (relationship instanceof ToOneRelationship<?> toOneRelationship)
+            include(toOneRelationship, document);
+        else if (relationship instanceof ToManyRelationship<?> toManyRelationship)
+            include(toManyRelationship, document);
     }
 
     private void include(ToOneRelationship<?> relationship, JsonApiDocument document) {

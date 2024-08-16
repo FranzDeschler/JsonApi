@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * This class links included {@link ResourceObject resource objects} to their corresponding {@link Relationship relationships}.
+ * This class links included {@link ResourceObject resource objects} to their corresponding
+ * {@link Relationship relationships} during deserialization.
  */
 class RelationshipLinker {
     /**

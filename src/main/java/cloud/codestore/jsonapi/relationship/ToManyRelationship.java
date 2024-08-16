@@ -64,7 +64,7 @@ public class ToManyRelationship<T extends ResourceObject> extends Relationship {
 
             setData(resourceIdentifiers);
         } else {
-            this.data = null;
+            this.data = new ResourceIdentifierObject[0];
         }
 
         return this;

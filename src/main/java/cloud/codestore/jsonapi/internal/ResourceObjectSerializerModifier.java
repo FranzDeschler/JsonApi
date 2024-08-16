@@ -37,10 +37,10 @@ public class ResourceObjectSerializerModifier extends BeanSerializerModifier {
                 String propertyName = property.getName();
 
                 if (PREDEFINED_FIELDS.contains(propertyName)) {
-                    if ("attributes".equals(propertyName) && property instanceof VirtualAttributesWriter)
-                        attributesWriter = (VirtualAttributesWriter) property;
-                    else if ("relationships".equals(propertyName) && property instanceof VirtualRelationshipsWriter)
-                        relationshipsWriter = (VirtualRelationshipsWriter) property;
+                    if ("attributes".equals(propertyName) && property instanceof VirtualAttributesWriter vaw)
+                        attributesWriter = vaw;
+                    else if ("relationships".equals(propertyName) && property instanceof VirtualRelationshipsWriter vaw)
+                        relationshipsWriter = vaw;
                 } else {
                     if (isRelationship(property.getMember().getRawType()))
                         relationships.add(property);
