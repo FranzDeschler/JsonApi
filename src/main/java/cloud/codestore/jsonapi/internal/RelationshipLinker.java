@@ -4,9 +4,11 @@ import cloud.codestore.jsonapi.relationship.Relationship;
 import cloud.codestore.jsonapi.resource.ResourceIdentifierObject;
 import cloud.codestore.jsonapi.resource.ResourceObject;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This class links included {@link ResourceObject resource objects} to their corresponding
@@ -19,53 +21,46 @@ class RelationshipLinker {
      */
     void link(List<Relationship> relationships, List<ResourceObject> includedResources) {
         if (!includedResources.isEmpty()) {
+            Map<ResourceIdentifierObject, ResourceObject> resourceMap = toMap(includedResources);
             for (Relationship relationship : relationships) {
-                linkIncludedResourcesToRelationships(includedResources, relationship);
-            }
-        }
-    }
-
-    private void linkIncludedResourcesToRelationships(
-            List<ResourceObject> includedResources,
-            Relationship relationship
-    ) {
-        if (relationship instanceof DeserializedToOneRelationship<?> toOneRelationship) {
-            bindIncludedResourcesToRelationship(includedResources, toOneRelationship);
-        } else if (relationship instanceof DeserializedToManyRelationship<?> toManyRelationship) {
-            bindIncludedResourcesToRelationship(includedResources, toManyRelationship);
-        }
-    }
-
-    private void bindIncludedResourcesToRelationship(
-            List<ResourceObject> includedResources,
-            DeserializedToOneRelationship<?> relationship
-    ) {
-        ResourceIdentifierObject identifier = relationship.getData();
-        for (ResourceObject resourceObject : includedResources) {
-            if (Objects.equals(identifier, resourceObject.getIdentifier())) {
-                relationship.setRelatedResource(resourceObject);
-                return;
-            }
-        }
-    }
-
-    private void bindIncludedResourcesToRelationship(
-            List<ResourceObject> includedResources,
-            DeserializedToManyRelationship<?> relationship
-    ) {
-        List<ResourceObject> relatedObjects = new ArrayList<>();
-
-        ResourceIdentifierObject[] resourceIdentifiers = relationship.getData();
-        if (resourceIdentifiers != null) {
-            for (ResourceIdentifierObject identifier : resourceIdentifiers) {
-                for (ResourceObject resourceObject : includedResources) {
-                    if (Objects.equals(identifier, resourceObject.getIdentifier())) {
-                        relatedObjects.add(resourceObject);
-                    }
+                if (relationship instanceof DeserializedToOneRelationship<?> toOneRelationship) {
+                    bindIncludedResourcesToRelationship(resourceMap, toOneRelationship);
+                } else if (relationship instanceof DeserializedToManyRelationship<?> toManyRelationship) {
+                    bindIncludedResourcesToRelationship(resourceMap, toManyRelationship);
                 }
             }
         }
+    }
 
-        relationship.setRelatedResource(relatedObjects);
+    private Map<ResourceIdentifierObject, ResourceObject> toMap(List<ResourceObject> resourceObjects) {
+        return resourceObjects.stream().collect(Collectors.toMap(
+                ResourceObject::getIdentifier,
+                resourceObject -> resourceObject
+        ));
+    }
+
+    private void bindIncludedResourcesToRelationship(
+            Map<ResourceIdentifierObject, ResourceObject> includedResources,
+            DeserializedToOneRelationship<?> relationship
+    ) {
+        ResourceIdentifierObject identifier = relationship.getData();
+        ResourceObject resourceObject = includedResources.get(identifier);
+        if (resourceObject != null)
+            relationship.setRelatedResource(resourceObject);
+    }
+
+    private void bindIncludedResourcesToRelationship(
+            Map<ResourceIdentifierObject, ResourceObject> includedResources,
+            DeserializedToManyRelationship<?> relationship
+    ) {
+        ResourceIdentifierObject[] resourceIdentifiers = relationship.getData();
+        if (resourceIdentifiers != null) {
+            List<ResourceObject> relatedObjects = Arrays.stream(resourceIdentifiers)
+                    .map(includedResources::get)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            relationship.setRelatedResource(relatedObjects);
+        }
     }
 }

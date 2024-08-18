@@ -57,9 +57,19 @@ public class RelationshipDeserializerModifier extends BeanDeserializerModifier {
         @Override
         public Object deserialize(JsonParser parser, DeserializationContext context) throws IOException {
             Relationship relationship = deserializeRelationship(parser, context);
-            JsonApiDocument parent = getParent(parser.getParsingContext().getParent());
-            if (parent != null) {
-                parent.addRelationshipBacklink(relationship);
+
+            boolean containsResourceLinkage = false;
+            if (relationship instanceof ToOneRelationship<?> toOneRelationship) {
+                containsResourceLinkage = toOneRelationship.getData() != null;
+            } else if (relationship instanceof ToManyRelationship<?> toManyRelationship) {
+                containsResourceLinkage = toManyRelationship.getData() != null && toManyRelationship.getData().length > 0;
+            }
+
+            if (containsResourceLinkage) {
+                JsonApiDocument parent = getParent(parser.getParsingContext().getParent());
+                if (parent != null) {
+                    parent.addRelationshipBacklink(relationship);
+                }
             }
 
             return relationship;
@@ -88,6 +98,9 @@ public class RelationshipDeserializerModifier extends BeanDeserializerModifier {
             Object parent = parentStreamContext.getCurrentValue();
             if (parent instanceof JsonApiDocument jsonApiDocument) {
                 return jsonApiDocument;
+            } else if (parent instanceof ResourceObject resourceObject) {
+                if (resourceObject.getParent() != null)
+                    return resourceObject.getParent();
             }
 
             return getParent(parentStreamContext.getParent());
