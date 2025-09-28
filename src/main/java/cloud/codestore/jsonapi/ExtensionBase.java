@@ -56,6 +56,7 @@ public abstract class ExtensionBase<T extends ExtensionBase> {
 
     /**
      * Returns the value of the given extension member name.
+     * The value must be cast explicitly.
      *
      * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
      * @return the associated value or {@code null}.
@@ -66,6 +67,45 @@ public abstract class ExtensionBase<T extends ExtensionBase> {
     public Object getExtensionMember(String memberName) {
         Objects.requireNonNull(memberName);
         return extensionMembers.get(memberName);
+    }
+
+    /**
+     * Returns the value of the given extension member name as String.
+     *
+     * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
+     * @return the associated value or {@code null}.
+     * @throws NullPointerException if {@code memberName} is {@code null}.
+     * @throws ClassCastException if the extension member is not a String.
+     * @since 1.1
+     */
+    @JsonIgnore
+    public String getExtensionMemberAsString(String memberName) {
+        return getExtensionMember(memberName, String.class);
+    }
+
+    /**
+     * Returns the value of the given extension member name.
+     *
+     * @param memberName the full name of the extension member including the extension-namespace. Must not be {@code null}.
+     * @param memberType the expected type of the extension member.
+     * @return the associated value or {@code null}.
+     * @throws NullPointerException if {@code memberName} is {@code null}.
+     * @throws ClassCastException if the extension member is not of the expected type.
+     * @since 1.1
+     */
+    @JsonIgnore
+    public <M> M getExtensionMember(String memberName, Class<M> memberType) {
+        Objects.requireNonNull(memberName);
+        Object value = extensionMembers.get(memberName);
+
+        if (value == null) {
+            return null;
+        } else if (memberType.isAssignableFrom(value.getClass())) {
+            return memberType.cast(value);
+        } else {
+            String message = String.format("Extension member '%s' is not of type %s", memberName, memberType.getName());
+            throw new ClassCastException(message);
+        }
     }
 
     /**

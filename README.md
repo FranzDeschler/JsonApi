@@ -286,7 +286,7 @@ var jsonApiObject = new JsonApiObject()
         .setExtensions("https://jsonapi.org/ext/atomic")
         .setProfiles("https://example.com/profiles/flexible-pagination", "https://example.com/profiles/resource-versioning");
 
-var document = JsonApiDocument.of(person).setJsonapiObject(new JsonApiObject());
+var document = JsonApiDocument.of(person).setJsonapiObject(jsonApiObject);
 ```
 ```json
 {

@@ -88,7 +88,7 @@ class TopLevelDeserializationTest {
                           "version:id": "42"
                         }""", JsonApiDocument.class);
 
-                assertThat(document.getExtensionMember("version:id")).isEqualTo("42");
+                assertThat(document.getExtensionMemberAsString("version:id")).isEqualTo("42");
             }
         }
 
@@ -110,7 +110,7 @@ class TopLevelDeserializationTest {
             }
 
             @Test
-            @DisplayName("a links object related to the primary data")
+            @DisplayName("a links object related to the document as a whole")
             void linksObject() {
                 var document = reader.read("""
                         {

@@ -64,7 +64,8 @@ class RelationshipDeserializationTest {
                           }
                         }""", Relationship.class);
 
-                assertThat(relationship.getLinks().getExtensionMember("dummy:ext")).isEqualTo("test");
+                String dummyExt = relationship.getLinks().getExtensionMemberAsString("dummy:ext");
+                assertThat(dummyExt).isEqualTo("test");
             }
         }
 
@@ -105,7 +106,7 @@ class RelationshipDeserializationTest {
                       "dummy:ext": "test"
                     }""", Relationship.class);
 
-            assertThat(relationship.getExtensionMember("dummy:ext")).isEqualTo("test");
+            assertThat(relationship.getExtensionMemberAsString("dummy:ext")).isEqualTo("test");
         }
     }
 
