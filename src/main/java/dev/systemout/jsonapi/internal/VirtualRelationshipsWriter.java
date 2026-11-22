@@ -1,0 +1,130 @@
+package dev.systemout.jsonapi.internal;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
+import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
+import com.fasterxml.jackson.databind.util.Annotations;
+import dev.systemout.jsonapi.document.JsonApiDocument;
+import dev.systemout.jsonapi.relationship.Relationship;
+import dev.systemout.jsonapi.relationship.ToManyRelationship;
+import dev.systemout.jsonapi.relationship.ToOneRelationship;
+import dev.systemout.jsonapi.resource.ResourceIdentifierObject;
+import dev.systemout.jsonapi.resource.ResourceObject;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.*;
+
+/**
+ * A custom {@link VirtualBeanPropertyWriter} implementation to serialize the virtual "relationships" object.
+ * <br/><br/>
+ * It also checks the "included" status of the relationships, loads the
+ * related data and adds them into the {@link JsonApiDocument}.
+ */
+public class VirtualRelationshipsWriter extends VirtualBeanPropertyWriter {
+    private List<BeanPropertyWriter> relationshipProperties = Collections.emptyList();
+    private ObjectMapper mapper;
+
+    VirtualRelationshipsWriter() {}
+
+    private VirtualRelationshipsWriter(BeanPropertyDefinition propDef, Annotations contextAnnotations, JavaType declaredType) {
+        super(propDef, contextAnnotations, declaredType);
+    }
+
+    void setRelationshipProperties(List<BeanPropertyWriter> relationshipProperties) {
+        if (relationshipProperties != null)
+            this.relationshipProperties = relationshipProperties;
+    }
+
+    @Override
+    protected Object value(Object resourceObject, JsonGenerator json, SerializerProvider prov) throws Exception {
+        if (relationshipProperties == null || relationshipProperties.isEmpty())
+            return null;
+
+        mapper = ((ObjectMapper) json.getCodec());
+        Map<String, Relationship> relationships = new TreeMap<>();
+
+        relationshipProperties.sort(Comparator.comparing(BeanPropertyWriter::getName)); //needed for ordering the included resources
+        for (BeanPropertyWriter property : relationshipProperties) {
+            property.getMember().fixAccess(true);
+            Relationship relationship = (Relationship) property.get(resourceObject);
+            if (relationship != null) {
+                relationships.put(property.getName(), relationship);
+
+                JsonApiDocument document = ((ResourceObject) resourceObject).getParent(); // only handle primary data relationships
+                if (relationship.isIncluded() && document != null)
+                    includeRelationship(relationship, document);
+            }
+        }
+
+        return relationships.isEmpty() ? null : relationships;
+    }
+
+    @Override
+    public VirtualBeanPropertyWriter withConfig(
+            MapperConfig<?> mapperConfig, AnnotatedClass annotatedClass,
+            BeanPropertyDefinition beanPropertyDefinition, JavaType javaType
+    ) {
+        return new VirtualRelationshipsWriter(beanPropertyDefinition, annotatedClass.getAnnotations(), javaType);
+    }
+
+    private void includeRelationship(Relationship relationship, JsonApiDocument document) throws IOException {
+        if (relationship instanceof ToOneRelationship<?> toOneRelationship)
+            include(toOneRelationship, document);
+        else if (relationship instanceof ToManyRelationship<?> toManyRelationship)
+            include(toManyRelationship, document);
+    }
+
+    private void include(ToOneRelationship<?> relationship, JsonApiDocument document) throws IOException {
+        ResourceObject relatedData = relationship.getRelatedResource();
+        if (relatedData != null) {
+            document.include(relatedData);
+            relationship.setData(relatedData.getIdentifier());
+            recursivelyIncludeRelationships(relatedData, document);
+        }
+    }
+
+    private void include(ToManyRelationship<?> relationship, JsonApiDocument document) throws IOException {
+        ResourceObject[] relatedData = relationship.getRelatedResource();
+        if (relatedData != null) {
+            document.include(relatedData);
+            relationship.setData(
+                    Arrays.stream(relatedData)
+                            .map(ResourceObject::getIdentifier)
+                            .toArray(ResourceIdentifierObject[]::new)
+            );
+
+            for (ResourceObject resourceObject : relatedData) {
+                recursivelyIncludeRelationships(resourceObject, document);
+            }
+        }
+    }
+
+    private static final OutputStream NULL_WRITER =  new OutputStream() {
+        @Override
+        public void write(int b) {}
+    };
+
+    /**
+     * To include related resource objects of included resource objects, this {@link VirtualRelationshipsWriter}
+     * needs to be called for the corresponding relationships.
+     * This is achieved by serializing the included resource object without actually writing the result.
+     */
+    private void recursivelyIncludeRelationships(
+            ResourceObject resourceObject, JsonApiDocument document
+    ) throws IOException {
+        // Set parent to be able to include the resource object to it.
+        resourceObject.setParent(document);
+
+        mapper.writeValue(NULL_WRITER, resourceObject);
+
+        // Avoid handling inclusion inside the "included" array. Otherwise, a ConcurrentModificationException occurs.
+        resourceObject.setParent(null);
+    }
+}

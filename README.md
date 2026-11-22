@@ -21,17 +21,17 @@ The current version of the library supports the JSON:API format [1.1](https://js
 The library can be included via Maven. It contains Jackson as its only dependency. 
 ```xml
 <dependency>
-    <groupId>cloud.codestore</groupId>
+    <groupId>dev.systemout</groupId>
     <artifactId>jsonapi</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 </dependency>
 ```
 If your application already includes Jackson and you want to avoid dependency conflicts, simply exclude Jackson.
 ```xml
 <dependency>
-    <groupId>cloud.codestore</groupId>
+    <groupId>dev.systemout</groupId>
     <artifactId>jsonapi</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <exclusions>
         <exclusion>
             <groupId>com.fasterxml.jackson.core</groupId>
